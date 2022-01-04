@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'inscription</title>
+    <style>
+        input[type=text] , select {
+          width: 15%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        input[type=password] , select {
+          width: 15%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+
+
+        
+        
+        input[type=submit] {
+          width: 30%;
+          background-color: #4CAF50;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+          background-color: #45a049;
+        }
+        
+        div {
+          border-radius: 5px;
+          background-color: #f2f2f2;
+          padding: 20px;
+        }
+        </style>
+</head>
+<body>
+    <div>
+        <form>
+            <label>Login :
+                <input type="text"  id ="login">
+            </label>
+            <label>Password : 
+                <input type="password"  id="password">
+            </label>
+
+            <label> 
+                Rôle : 
+                <select list="roles" id="roles" multiple >
+                    <option name ="Auteur" value="Auteur">Auteur</option>
+                    <option name ="Reviewer" value="Reviewer">Reviewer</option>
+                    <option name ="Membre du comité" value="Membre du comité">Membre du comité</option>
+                    <option name ="Organisateur" value="Organisateur">Organisateur</option>
+                    <option name ="Administrateur" value="Administrateur">Administrateur</option>
+                </select>
+            </label> 
+        </form>
+        <button onclick="inscription()"  value="Inscription"> Inscription </button>
+    </div>
+
+
+
+    <div>
+        <form method="POST" name="form-connexion" action="/compte/login">
+            <label>Login :
+                <input type="text"  name="submitted_login_connexion">
+            </label>
+            <label>Password : 
+                <input type="password" name="submitted_password_connexion">
+            </label>
+            <label> 
+                Rôle : 
+                <select list="Role" name="listeRoleConnexion">
+                    <option name ="Auteur" value="Auteur">Auteur</option>
+                    <option name ="Reviewer" value="Reviewer">Reviewer</option>
+                    <option name ="Membre du comité" value="Membre du comité">Membre du comité</option>
+                    <option name ="Organisateur" value="Organisateur">Organisateur</option>
+                    <option name ="Administrateur" value="Administrateur">Administrateur</option>
+                </select>
+            </label>
+
+            <input type="submit" value="Connexion">
+        </form>
+    </div>
+</body>
+
+<script>
+    function inscription(){
+        let options = document.getElementById("roles").selectedOptions;
+        var rolesValues = Array.from(options).map(({ value }) => value);
+
+        let inscriptionObjet = {
+            login : document.getElementById("login").value,
+            password : document.getElementById("password").value,
+            roles : rolesValues
+        }
+
+        fetch("http://localhost:3002/users", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(inscriptionObjet)}).
+        then((res) => {
+            alert("Compte créé ! ")
+        }).catch(error => {
+            alert("Erreur login / MDP incorrect ")
+        })
+    }
+</script>
+</html>
+

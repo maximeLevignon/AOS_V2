@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Création de conférence</title>
+
+    <script type="text/javascript">
+    </script>
+
+</head>
+<body>
+    <div id="divDesConferencesExistantes">
+        <label>
+            Liste des conférences existantes
+        </label>
+        <ul id="listeDesConferencesExistantes">
+        </ul>
+    </div>
+    <div>
+        <form id="formulaireCreationConference" action="/conference/creation" method="POST">
+            <input type="text" name="titreConference" id="titreConference" placeholder="Titre de la conférence">
+            <input type="text" name="domaineConference" id="domaineConference" placeholder="Domaine de la conférence">
+            <input type="text" name="organisateur" id="organisateur" placeholder="Organisateur" readonly style="display: none">
+            <input type="text" name="dateContribFin" id="dateContribFin" placeholder="Date contrib Fin dd/mm/yyyy">
+            <input type="text" name="dateEventDebut" id="dateEventDebut" placeholder="Debut de la conférence dd/mm/yyyy">
+            <input type="text" name="dateEventFin" id="dateEventFin" placeholder="Fin de la conférence dd/mm/yyyy">
+            <label>Membres du Comité de sélection disponibles : </label>
+            <select name="membresDuComite" id="membresDuComite"></select>
+            <input type="submit" name="creation" value="Créer une conférence">
+        </form>
+    </div>
+
+     <script>
+         (function () {
+        console.log("function is called");
+            const Http = new XMLHttpRequest();
+            const url='http://localhost:3001/conference';
+            Http.open("GET", url);
+            Http.send();
+
+            Http.onreadystatechange = function(){
+                if(this.readyState == 4 && this.status == 200){
+                    
+                    let data = JSON.parse(Http.responseText)
+                    let ul = document.getElementById("listeDesConferencesExistantes");
+                    for (let i = 0 ; i < data.length ; i++){
+                        let li = document.createElement("li");
+                        li.appendChild(document.createTextNode(data[i].titre));
+                        ul.appendChild(li);
+                    }
+                }
+                /*let ul = document.getElementById("listeDesConferencesExistantes");
+                let li = document.createElement("li");
+                li.appendChild(document.createTextNode("+++"));
+                ul.appendChild(li);*/
+            }
+    })();</script>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search)
+    console.log(window.location.search)
+    console.log(urlParams.get("id"))
+    document.getElementById("organisateur").value = urlParams.get("id")
+</script>
+
+<script>
+    let xhr = new XMLHttpRequest() ;
+
+    xhr.onload = function(res){
+        let liste = document.getElementById("membresDuComite") ;
+        let membresDuComite = JSON.parse(xhr.response)
+
+        membresDuComite.forEach(element => {
+            let option = document.createElement("option")
+            option.text = element.compte.login;
+            option.value = element.compte.login;
+            liste.append(option);
+        });
+    }
+    xhr.open("get", "http://localhost:3001/compte/mdc/login", true);
+    xhr.send();
+</script>
+</body>
+</html>
+

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publier un article</title>
+</head>
+<body>
+    <div id="divDesContributionAjoutees">
+        <label>
+            Liste des contributions ajoutées
+        </label>
+        <ul id="listeDesContributionAjoutees">
+        </ul>
+    </div>
+    <div>
+        <form method="POST" action="/contribution/PublierContribution" encType="multipart/form-data">
+            <label>Titre de l'article : </label>
+            <input type="text" name="titreContribution">
+            <input type="file" accept=".pdf" name="fichierContribution">
+            <label>Conférence : </label>
+            <select name="titreConference" id="lesTitreDeConf"></select>
+            <input type="text" name="auteur" id="auteur" placeholder="Auteur" readonly style="display: none">
+            <input type="submit" value="Publier la contribution">
+        </form>
+    </div>
+</body>
+
+<script>
+    let xhr = new XMLHttpRequest() ;
+    xhr.onload = function(res){
+        let liste = document.getElementById("lesTitreDeConf") ;
+        let mesTitres = JSON.parse(xhr.response) 
+
+        mesTitres.forEach(element => {
+            let option = document.createElement("option")
+            option.text = element.titre;
+            option.value = element.titre;
+            liste.append(option);
+        });
+    }
+    xhr.open("get", "http://localhost:3001/conference/titres", true);
+    xhr.send();
+</script>
+
+<script>
+    (function () {
+    console.log("fonction récupérer liste des contribution par Id");
+    const Http = new XMLHttpRequest();
+    const url='http://localhost:3001/contribution';
+    Http.open("GET", url);
+    Http.send();
+    Http.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+
+            let data = JSON.parse(Http.responseText)
+            let ul = document.getElementById("listeDesContributionAjoutees");
+            for (let i = 0 ; i < data.length ; i++){
+                let li = document.createElement("li");
+                li.appendChild(document.createTextNode(data[i].titre));
+                ul.appendChild(li);
+            }
+        }
+    }
+})();
+</script>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search)
+    console.log(window.location.search)
+    window.localStorage.setItem("UserID", urlParams.get("id"))
+    console.log("local storage : "+window.localStorage.getItem("UserID"))
+    document.getElementById("auteur").value =  window.localStorage.getItem("UserID")
+</script>
+</html>

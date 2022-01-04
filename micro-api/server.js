@@ -3,6 +3,7 @@ const express = require('express')
 const contributionRouter = require('./contribution/contribution.router')
 const userRouter = require('./user/user.router')
 const authRouter = require('./auth/auth.router')
+const conferenceRouter = require('./conference/conference.router')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const database = require('./database.js')
@@ -16,6 +17,7 @@ app.use(cors())
 app.use('/contributions', contributionRouter)
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
+app.use('/conferences', conferenceRouter)
 
 
 

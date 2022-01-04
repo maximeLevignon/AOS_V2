@@ -1,49 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Création de conférence</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Création de conférence</title>
 
-    <script type="text/javascript">
-    </script>
+        <script type="text/javascript">
+        </script>
 
-</head>
-<body>
-    <div id="divDesConferencesExistantes">
-        <label>
-            Liste des conférences existantes
-        </label>
-        <ul id="listeDesConferencesExistantes">
-        </ul>
-    </div>
-    <div>
-        <form id="formulaireCreationConference" action="/conference/creation" method="POST">
-            <input type="text" name="titreConference" id="titreConference" placeholder="Titre de la conférence">
-            <input type="text" name="domaineConference" id="domaineConference" placeholder="Domaine de la conférence">
-            <input type="text" name="organisateur" id="organisateur" placeholder="Organisateur" readonly style="display: none">
-            <input type="text" name="dateContribFin" id="dateContribFin" placeholder="Date contrib Fin dd/mm/yyyy">
-            <input type="text" name="dateEventDebut" id="dateEventDebut" placeholder="Debut de la conférence dd/mm/yyyy">
-            <input type="text" name="dateEventFin" id="dateEventFin" placeholder="Fin de la conférence dd/mm/yyyy">
-            <label>Membres du Comité de sélection disponibles : </label>
-            <select name="membresDuComite" id="membresDuComite"></select>
-            <input type="submit" name="creation" value="Créer une conférence">
-        </form>
-    </div>
+    </head>
+    <body>
+        <div id="divDesConferencesExistantes">
+            <label>
+                Liste des conférences existantes
+            </label>
+            <ul id="listeDesConferencesExistantes">
+            </ul>
+        </div>
+        <div>
+            <form id="formulaireCreationConference" action="/conference/creation" method="POST">
+                <input type="text"  id="titre" placeholder="Titre de la conférence">
+                <input type="text"  id="domaine" placeholder="Domaine de la conférence">
+                <input type="text"  id="organisateur" placeholder="Organisateur" readonly style="display: none">
+                <input type="text"  id="dateContribFin" placeholder="Date contrib Fin dd/mm/yyyy">
+                <input type="text"  id="dateEventDebut" placeholder="Debut de la conférence dd/mm/yyyy">
+                <input type="text"  id="dateEventFin" placeholder="Fin de la conférence dd/mm/yyyy">
+                <label>Membres du Comité de sélection disponibles : </label>
+                <select name="membreDuComite" ></select>
+            </form>
+            <button onclick="creationConference()">Créer une conférence</button>
+        </div>
 
-     <script>
-         (function () {
-        console.log("function is called");
-            const Http = new XMLHttpRequest();
-            const url='http://localhost:3001/conference';
-            Http.open("GET", url);
-            Http.send();
-
-            Http.onreadystatechange = function(){
+        <script> 
+            let req = new XMLHttpRequest();
+            const url='http://localhost:3002/conferences/titres';
+                
+            req.onreadystatechange = function(){
                 if(this.readyState == 4 && this.status == 200){
-                    
-                    let data = JSON.parse(Http.responseText)
+                        
+                    let data = JSON.parse(req.responseText)
                     let ul = document.getElementById("listeDesConferencesExistantes");
                     for (let i = 0 ; i < data.length ; i++){
                         let li = document.createElement("li");
@@ -51,37 +47,52 @@
                         ul.appendChild(li);
                     }
                 }
-                /*let ul = document.getElementById("listeDesConferencesExistantes");
-                let li = document.createElement("li");
-                li.appendChild(document.createTextNode("+++"));
-                ul.appendChild(li);*/
             }
-    })();</script>
 
-<script>
-    const urlParams = new URLSearchParams(window.location.search)
-    console.log(window.location.search)
-    console.log(urlParams.get("id"))
-    document.getElementById("organisateur").value = urlParams.get("id")
-</script>
+            req.open("GET", url, true);
+            req.send();
+        </script>
+        <script>
+            let xhr = new XMLHttpRequest() ;
 
-<script>
-    let xhr = new XMLHttpRequest() ;
+            xhr.onload = function(res){
+                let liste = document.getElementById("membresDuComite") ;
+                let membresDuComite = JSON.parse(xhr.response)
+            
+                membresDuComite.forEach(element => {
+                    let option = document.createElement("option")
+                    option.text = element.login;
+                    option.value = element.login;
+                    liste.append(option);
+                });
+            }
+            xhr.open("GET", "http://localhost:3002/users/MDC/login", true);
+            xhr.send();
+        </script>
+    </body>
+    <script>
+        function creationConference(){
+            let conferenceObjet = {
+               titre : document.getElementById("titre").value,
+               domaine : document.getElementById("domaine").value ,
+               organisateur : document.getElementById("titre").value ,
+               membre_comite_selection : document.getElementById("membreDuComite").value,
+               date_contrib_fin : document.getElementById("dateContribFin").value,
+               date_event_debut : document.getElementById("dateEventDebut").value,
+               date_event_fin : document.getElementById("dateEventFin").value, 
+            }
 
-    xhr.onload = function(res){
-        let liste = document.getElementById("membresDuComite") ;
-        let membresDuComite = JSON.parse(xhr.response)
-
-        membresDuComite.forEach(element => {
-            let option = document.createElement("option")
-            option.text = element.compte.login;
-            option.value = element.compte.login;
-            liste.append(option);
-        });
-    }
-    xhr.open("get", "http://localhost:3001/compte/mdc/login", true);
-    xhr.send();
-</script>
-</body>
+            fetch("http://localhost:3002/conferences", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(connexionObjet)}).
+            then((res) => {
+            if(res.status == 200){
+                alert("Conférence créé avec succès")
+            } else {
+                alert("Erreur dans la création")
+            }
+        }).catch(error => {
+            alert("Erreur login / MDP incorrect ")
+        })
+        }
+    </script>
 </html>
 

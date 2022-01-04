@@ -54,15 +54,15 @@
     <div>
         <form>
             <label>Login :
-                <input type="text"  id ="login">
+                <input type="text"  id ="loginInsc">
             </label>
             <label>Password : 
-                <input type="password"  id="password">
+                <input type="password"  id="passwordInsc">
             </label>
 
             <label> 
                 Rôle : 
-                <select list="roles" id="roles" multiple >
+                <select list="roles" id="rolesInsc" multiple >
                     <option name ="Auteur" value="Auteur">Auteur</option>
                     <option name ="Reviewer" value="Reviewer">Reviewer</option>
                     <option name ="Membre du comité" value="Membre du comité">Membre du comité</option>
@@ -71,43 +71,32 @@
                 </select>
             </label> 
         </form>
-        <button onclick="inscription()"  value="Inscription"> Inscription </button>
+        <button onclick="inscription()"  > Inscription </button>
     </div>
 
 
 
     <div>
-        <form method="POST" name="form-connexion" action="/compte/login">
+        <form>
             <label>Login :
-                <input type="text"  name="submitted_login_connexion">
+                <input type="text"  id="loginConnexion">
             </label>
             <label>Password : 
-                <input type="password" name="submitted_password_connexion">
+                <input type="password" id="passwordConnexion">
             </label>
-            <label> 
-                Rôle : 
-                <select list="Role" name="listeRoleConnexion">
-                    <option name ="Auteur" value="Auteur">Auteur</option>
-                    <option name ="Reviewer" value="Reviewer">Reviewer</option>
-                    <option name ="Membre du comité" value="Membre du comité">Membre du comité</option>
-                    <option name ="Organisateur" value="Organisateur">Organisateur</option>
-                    <option name ="Administrateur" value="Administrateur">Administrateur</option>
-                </select>
-            </label>
-
-            <input type="submit" value="Connexion">
         </form>
+        <button onclick="connexion()"> Connexion </button>
     </div>
 </body>
 
 <script>
     function inscription(){
-        let options = document.getElementById("roles").selectedOptions;
+        let options = document.getElementById("rolesInsc").selectedOptions;
         var rolesValues = Array.from(options).map(({ value }) => value);
 
         let inscriptionObjet = {
-            login : document.getElementById("login").value,
-            password : document.getElementById("password").value,
+            login : document.getElementById("loginInsc").value,
+            password : document.getElementById("passwordInsc").value,
             roles : rolesValues
         }
 
@@ -115,8 +104,28 @@
         then((res) => {
             alert("Compte créé ! ")
         }).catch(error => {
+            alert("Erreur Création de compte ")
+        })
+    }
+
+    function connexion(){
+        let connexionObjet = {
+            login : document.getElementById("loginConnexion").value,
+            password : document.getElementById("passwordConnexion").value
+        }
+        console.log(connexionObjet);
+
+        fetch("http://localhost:3002/auth", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(connexionObjet)}).
+        then((res) => {
+            if(res.status == 200){
+                window.location = "http://localhost:3001/menu.html"
+            } else {
+                alert("Login Mdp Incorrect")
+            }
+        }).catch(error => {
             alert("Erreur login / MDP incorrect ")
         })
+
     }
 </script>
 </html>

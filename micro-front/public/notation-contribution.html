@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=, initial-scale=1.0">
+    <meta name="viewport" content="width", initial-scale=1.0">
     <title>Notation d'une contribution</title>
     <style>
         *{
@@ -45,18 +45,13 @@
 .rate > label:hover ~ input:checked ~ label {
     color: #c59b08;
 }
-
-
     </style>
+
 </head>
 <body>
 <div>
     <form>
-        <select>
-            <option value ="Conférence A">Conférence A</option>
-            <option value ="Conférence B">Conférence B</option>
-            <option value ="Conférence C">Conférence C</option>
-        </select>
+        <select id="listeDesConferencesExistantes"></select>
 
         <select>
             <option value ="Papier A - Conférence A">Papier A - Conférence A</option>
@@ -80,6 +75,24 @@
         <input type="submit" value="Valider">
     </form>
 </div>
-    
 </body>
+<script>
+    let req = new XMLHttpRequest();
+    const url='http://localhost:3002/conferences/titres';
+
+    req.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+
+            let data = JSON.parse(req.responseText)
+            let liste = document.getElementById("listeDesConferencesExistantes");
+            for (let i = 0 ; i < data.length ; i++){
+                let opt = document.createElement('option')
+                opt.appendChild(document.createTextNode(data[i].titre))
+                liste.appendChild(opt)
+            }
+        }
+    }
+    req.open("GET", url, true);
+    req.send();
+</script>
 </html>

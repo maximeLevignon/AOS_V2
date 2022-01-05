@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
 
 /**
  * Créé une conférence
- * TODO : voir avec le JWT pour que l'organisateur soit l'user
+ * Vérifie la clé privée du JWT
  */
 router.post('/', (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)

@@ -118,7 +118,7 @@
         fetch("http://localhost:3002/auth", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(connexionObjet)}).
         then((res) => {
             if(res.status == 200){
-                window.location = "http://localhost:3001/menu.html"
+              //window.location = "http://localhost:3001/menu.html"
             } else {
                 alert("Login Mdp Incorrect")
             }

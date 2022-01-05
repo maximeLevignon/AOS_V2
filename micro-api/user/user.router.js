@@ -12,7 +12,7 @@ router.post('/', (req, res) =>{
         password: req.body.password,
         roles: req.body.roles,
     });
-    console.log(req.body)
+
       user.save().then(()=> {
           res.status(StatusCodes.OK).json(user)
       }).catch(

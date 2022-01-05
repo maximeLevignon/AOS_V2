@@ -2,7 +2,7 @@ let express = require('express')
 let router = express.Router()
 let Conference = require('./conference.model')
 let StatusCodes = require('http-status-codes').StatusCodes
-
+let cookies = require('cookies')
 /*
 * Retourne toutes les conférences
 */
@@ -31,8 +31,9 @@ router.get('/', (req, res) => {
  * TODO : voir avec le JWT pour que l'organisateur soit l'user
  */
 router.post('/', (req, res) => {
-    
-    const conference = new Conference({
+    let token = localStorage.getItem("token");
+    console.log(token)
+    /*const conference = new Conference({
         titre: req.body.titre,
         domaine: req.body.domaine,
         organisateur: req.body.organisateur,
@@ -42,6 +43,7 @@ router.post('/', (req, res) => {
         date_event_fin: req.body.dateEventFin,
     });
 
+    console.log("avant le save")
     conference.save().then(() =>{
         res.status(StatusCodes.OK).json(conference)
     }).catch(
@@ -50,7 +52,7 @@ router.post('/', (req, res) => {
             error: error
           });
         }
-    );
+    );*/
 })
 
 

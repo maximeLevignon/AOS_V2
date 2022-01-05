@@ -9,6 +9,7 @@
 <body>
     <button onclick="redirectionContribution()">Gestion des contributions</button>
     <button onclick="redirectionConference()">Gestion des conférences</button>
+    <button onclick="redirectionNotationContribution()">Notation des contributions</button>
 </body>
 
 <script>
@@ -18,6 +19,10 @@
 
     function redirectionConference(){
         window.location = "http://localhost:3001/creation-conference.html"
+    }
+
+    function redirectionNotationContribution(){
+        window.location = "http://localhost:3001/notation-contribution.html"
     }
 </script>
 </html>

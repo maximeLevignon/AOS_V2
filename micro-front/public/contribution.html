@@ -15,22 +15,46 @@
         </ul>
     </div>
     <div>
-        <form method="POST" action="/contribution/PublierContribution" encType="multipart/form-data">
+        <form>
             <label>Titre de l'article : </label>
-            <input type="text" name="titreContribution">
-            <input type="file" accept=".pdf" name="fichierContribution">
+            <input type="text" id="titreContribution">
+            <input type="file" accept=".pdf" id="fichierContribution" name="fichierContribution">
             <label>Conférence : </label>
-            <select name="titreConference" id="lesTitreDeConf"></select>
+            <select id="titreConference" ></select>
             <input type="text" name="auteur" id="auteur" placeholder="Auteur" readonly style="display: none">
-            <input type="submit" value="Publier la contribution">
         </form>
+        <button onclick="publierContribution()"> Publier la contribution</button>
     </div>
 </body>
 
 <script>
+    function publierContribution(){
+
+        let contributionObjet= {
+            titre:document.getElementById("titreContribution").value,
+            conference:document.getElementById("titreConference").value,
+            statut: "OK",
+            date_publication: new Date(),
+            nombre_review:0,
+            total_review:0,
+            moyenne_review:0,
+            fichier:document.getElementById("fichierContribution").value
+        }
+
+        fetch("http://localhost:3002/contributions", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(contributionObjet)}).
+            then((res) => {
+            if(res.status == 200){
+                alert("contribution créé avec succès")
+            } else {
+                alert("Erreur dans le dépot")
+            }
+        })
+    }
+</script>
+    <script>
     let xhr = new XMLHttpRequest() ;
     xhr.onload = function(res){
-        let liste = document.getElementById("lesTitreDeConf") ;
+        let liste = document.getElementById("titreConference") ;
         let mesTitres = JSON.parse(xhr.response) 
 
         mesTitres.forEach(element => {
@@ -40,15 +64,14 @@
             liste.append(option);
         });
     }
-    xhr.open("get", "http://localhost:3001/conferences/titres", true);
+    xhr.open("get", "http://localhost:3002/conferences/titres", true);
     xhr.send();
 </script>
 
 <script>
-    (function () {
-    console.log("fonction récupérer liste des contribution par Id");
+
     const Http = new XMLHttpRequest();
-    const url='http://localhost:3001/contribution';
+    const url='http://localhost:3002/contributions';
     Http.open("GET", url);
     Http.send();
     Http.onreadystatechange = function(){
@@ -63,14 +86,6 @@
             }
         }
     }
-})();
-</script>
 
-<script>
-    const urlParams = new URLSearchParams(window.location.search)
-    console.log(window.location.search)
-    window.localStorage.setItem("UserID", urlParams.get("id"))
-    console.log("local storage : "+window.localStorage.getItem("UserID"))
-    document.getElementById("auteur").value =  window.localStorage.getItem("UserID")
 </script>
 </html>

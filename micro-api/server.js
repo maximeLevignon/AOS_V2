@@ -7,11 +7,15 @@ const conferenceRouter = require('./conference/conference.router')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const database = require('./database.js')
+const path = require('path')
+const { cp } = require('fs');
+const fileUpload = require('express-fileupload');
 const app = express()
 const port = 3002
 
 
 
+app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(cors())
 app.use('/contributions', contributionRouter)

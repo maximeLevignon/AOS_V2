@@ -72,10 +72,10 @@
     </body>
     <script>
         function creationConference(){
+
             let conferenceObjet = {
                titre : document.getElementById("titre").value,
                domaine : document.getElementById("domaine").value ,
-               organisateur : document.getElementById("titre").value ,
                membre_comite_selection : document.getElementById("membreDuComite").value,
                date_contrib_fin : document.getElementById("dateContribFin").value,
                date_event_debut : document.getElementById("dateEventDebut").value,
@@ -83,7 +83,7 @@
             }
 
             console.log(conferenceObjet)
-            fetch("http://localhost:3002/conferences", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(conferenceObjet)}).
+            fetch("http://localhost:3002/conferences", {method : "POST", headers : new Headers({'content-type' : "application/json","authorization":localStorage.getItem("token")}) ,body : JSON.stringify(conferenceObjet)}).
             then((res) => {
             if(res.status == 200){
                 alert("Conférence créé avec succès")

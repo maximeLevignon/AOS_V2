@@ -3,6 +3,7 @@ let router = express.Router()
 let Conference = require('./conference.model')
 let StatusCodes = require('http-status-codes').StatusCodes
 let cookies = require('cookies')
+let validateJWT = require('../auth/validatorToken')
 /*
 * Retourne toutes les conférences
 */
@@ -31,19 +32,17 @@ router.get('/', (req, res) => {
  * TODO : voir avec le JWT pour que l'organisateur soit l'user
  */
 router.post('/', (req, res) => {
-    let token = localStorage.getItem("token");
-    console.log(token)
-    /*const conference = new Conference({
+    let payload = validateJWT(req?.headers?.authorization)
+    if(payload){ const conference = new Conference({
         titre: req.body.titre,
         domaine: req.body.domaine,
-        organisateur: req.body.organisateur,
-        membre_comite_selection: req.body.membreDuComite,
-        date_contrib_fin: req.body.dateContribFin,
-        date_event_debut: req.body.dateEventDebut,
-        date_event_fin: req.body.dateEventFin,
+        organisateur: payload.id,
+        membre_comite_selection: req.body.membre_comite_selection,
+        date_contrib_fin: req.body.date_contrib_fin,
+        date_event_debut: req.body.date_event_debut,
+        date_event_fin: req.body.date_event_fin,
     });
 
-    console.log("avant le save")
     conference.save().then(() =>{
         res.status(StatusCodes.OK).json(conference)
     }).catch(
@@ -52,7 +51,11 @@ router.post('/', (req, res) => {
             error: error
           });
         }
-    );*/
+    );
+    } else{
+        res.status(StatusCodes.UNAUTHORIZED)
+    }
+   
 })
 
 

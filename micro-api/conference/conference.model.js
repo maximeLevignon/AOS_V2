@@ -4,7 +4,7 @@ var uniqueValidator = require('mongoose-unique-validator')
 const conferenceSchema = mongoose.Schema({
   titre: { type: String, required: true, unique : true },
   domaine:{type:String},
-  organisateur: { type: Object, required: true },
+  organisateur: { type: String, required: true },
   membre_comite_selection: { type: Object, required: true },
   date_contrib_fin:{type:String},
   date_event_debut:{type:String},

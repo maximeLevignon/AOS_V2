@@ -116,9 +116,10 @@
         console.log(connexionObjet);
 
         fetch("http://localhost:3002/auth", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(connexionObjet)}).
-        then((res) => {
+        then(async(res) => {
             if(res.status == 200){
-              //window.location = "http://localhost:3001/menu.html"
+              localStorage.setItem("token",(await  res.json()).jwt)
+              window.location = "http://localhost:3001/menu.html"
             } else {
                 alert("Login Mdp Incorrect")
             }

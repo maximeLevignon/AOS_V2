@@ -52,11 +52,14 @@
 <div>
     <form>
         <select id="listeDesConferencesExistantes" onchange="onListeDesConfChange()">
+            <option value="">Pas de conférence sélectionnée</option>
         </select>
-        <select id="listeDesContributionsParConférence"></select>
+        <select id="listeDesContributionsParConférence">
+            <option value="">Pas de contribution sélectionnée</option>
+        </select>
         <input type="textarea" id="Note" placeholder="Votre note">
         <input type="textarea" name="commentaire" placeholder="Votre commentaire">
-        <button onclick="noterConference()">Valider la notation</button>
+        <button onclick="noterContribution()">Valider la notation</button>
     </form>
 </div>
 </body>
@@ -70,12 +73,12 @@
         if(this.readyState == 4 && this.status == 200){
 
             let data = JSON.parse(req.responseText)
-            let liste = document.getElementById("listeDesConferencesExistantes");
+            let listeConf = document.getElementById("listeDesConferencesExistantes");
             for (let i = 0 ; i < data.length ; i++){
                 let opt = document.createElement('option')
                 opt.setAttribute("value", data[i]._id)
                 opt.appendChild(document.createTextNode(data[i].titre))
-                liste.appendChild(opt)
+                listeConf.appendChild(opt)
             }
         }
     }
@@ -85,85 +88,56 @@
 
 <!-- Afficher les contributions selon la conférence sélectionnée -->
 <script>
-
-    function onListeDesConfChange(){
-        let listeConf = document.getElementById("listeDesConferencesExistantes")
-        let idConfChoisie = listeConf.value;
-        console.log(idConfChoisie)
-        fetch("http://localhost:3002/conferences/contributions", {method : "GET", headers : new Headers({'content-type' : "application/json"})})
-            .then((res) => {
-            if(res.status == 200){
-                alert("Les contributions ont été récupérées avec succès")
-                let listeContrib = document.getElementById("listeDesContributionsParConférence")
-
-            } else if (res.status == 400){
-                alert("Erreur dans la récupération des contributions")
+    function onListeDesConfChange() {
+        let listeContrib = document.getElementById("listeDesContributionsParConférence")
+        Array.from(listeContrib.children).forEach((element, index) =>{
+            if(index > 0){
+                listeContrib.removeChild(element)
             }
         })
-        //associer la contrib avec l'id de la conf
-    }
-    /*let xhr = new XMLHttpRequest();
-    const confs='http://localhost:3002/contributions';
-
-    xhr.onreadystatechange = function(){
-        if(this.readyState == 4 && this.status == 200){
-            let listeConf = document.getElementById("listeDesConferencesExistantes")
-            let confChoisie = listeConf.value
-            console.log(listeConf)
-            console.log(confChoisie)
-            let data = JSON.parse(xhr.responseText)
-            let liste = document.getElementById("listeDesContributionsParConférence");
-            for (let i = 0 ; i < data.length ; i++){
-                if(data[i].conference == confChoisie){
-                    let opt = document.createElement('option')
-                    opt.appendChild(document.createTextNode(data[i].titre))
-                    liste.appendChild(opt)
+        let listeConf = document.getElementById("listeDesConferencesExistantes")
+        let choixConf = listeConf.value
+        let url = "http://localhost:3002/contributions?idConference="+choixConf
+        fetch(url, {
+            method: "GET",
+            headers: new Headers({'content-type': "application/json"})
+        })
+            .then(async (res) => {
+                if (res.status == 200) {
+                    let listeContrib = document.getElementById("listeDesContributionsParConférence")
+                    let resContrib = await res.json()
+                    console.log(resContrib)
+                    resContrib.forEach(element =>{
+                        let opt = document.createElement('option')
+                        opt.setAttribute("value", element._id)
+                        opt.appendChild(document.createTextNode(element.titre))
+                        listeContrib.appendChild(opt)
+                    })
+                } else if (res.status == 400) {
+                    alert("Erreur dans l'envoi de la notation")
                 }
-
-            }
-        }
+            })
     }
-    let data = JSON.parse(xhr.response)
-    for (let i = 0 ; i < data.length ; i++) {
-        var d_name = data[i].titre;
-    }
-    var dis_update = function() {
-
-        var conf = document.getElementById("listeDesContributionsParConférence");
-        var confChoisie = conf.val
-        var dis = $('#listeDesContributionsParConférence').empty();
-        for (let i = 0 ; i < data.length ; i++) {
-            var d_name = data[i].titre;
-            dis.append($('<option>').val(d_name).text(d_name));
-        }
-    }
-    $('#listeDesConferencesExistantes').change(dis_update);
-    dis_update();
-
-    xhr.open("GET", confs, true);
-    xhr.send();*/
-
-
 </script>
 
 <!-- Valider la notation d'une contribution -->
 <script>
-    function noterConference(){
+    function noterContribution() {
+        const idContribution = document.getElementById("listeDesContributionsParConférence").value
+        const noteContribution = document.getElementById("Note").value
 
-        let noteObjet = {
-            conf : document.getElementById("listeDesConferencesExistantes").value,
-            contrib : document.getElementById("listeDesContributionsParConférence").value ,
-            note : document.getElementById("Note").value,
-        }
-        console.log(noteObjet)
-        fetch("http://localhost:3002/conferences", {method : "POST", headers : new Headers({'content-type' : "application/json","authorization":localStorage.getItem("token")}) ,body : JSON.stringify(noteObjet)}).
-        then((res) => {
-            if(res.status == 200){
-                alert("La notation a été envoyée avec succès")
-            } else if (res.status == 400){
-                alert("Erreur dans l'envoi de la notation")
-            }
+        fetch("http://localhost:3002/contributions/"+idContribution+"/notes", {
+            method: "PUT",
+            headers: new Headers({'content-type': "application/json", "authorization": localStorage.getItem("token")}),
+            body: JSON.stringify({note: noteContribution})
         })
+            .then((res) => {
+                if (res.status == 200) {
+                    alert("La notation a été envoyée avec succès")
+                } else {
+                    alert("Erreur dans l'envoi de la notation")
+                }
+            })
     }
 </script>
 

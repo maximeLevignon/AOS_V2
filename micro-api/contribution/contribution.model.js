@@ -6,9 +6,7 @@ const contributionSchema = mongoose.Schema({
     idConference: { type: String, required: true },
     statut:{type: String, required: true},
     date_publication:{type: Date, required: true},
-    nombre_review:{type: Number, required: true},
-    total_review:{type: Number, required: true},
-    moyenne_review:{type:Number, required: true},
+    notes: {type :[Number], required: true},
     fichier:{type: String, required : false},
 });
 

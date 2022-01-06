@@ -21,43 +21,48 @@
             <input type="file" accept=".pdf" id="fichierContribution" name="fichierContribution">
             <label>Conférence : </label>
             <select id="titreConference" ></select>
-            <input type="text" name="auteur" id="auteur" placeholder="Auteur" readonly style="display: none">
         </form>
         <button onclick="publierContribution()"> Publier la contribution</button>
     </div>
 </body>
 
+<!-- Publie une contribution -->
 <script>
-    function publierContribution(){
+    function publierContribution() {
 
-        let contributionObjet= {
-            titre:document.getElementById("titreContribution").value,
-            conference:document.getElementById("titreConference").value,
+        let contributionObjet = {
+            titre: document.getElementById("titreContribution").value,
+            idConference: document.getElementById("titreConference").value,
             statut: "OK",
             date_publication: new Date(),
-            nombre_review:0,
-            total_review:0,
-            moyenne_review:0,
-            fichier:document.getElementById("fichierContribution").value
+            notes: []
+            //fichier:document.getElementById("fichierContribution").value
         }
-
-        fetch("http://localhost:3002/contributions", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(contributionObjet)}).
-            then((res) => {
-            if(res.status == 200){
-                alert("contribution créé avec succès")
-            } else {
-                alert("Erreur dans le dépot")
-            }
+        console.log(contributionObjet.idConference)
+        fetch("http://localhost:3002/contributions", {
+            method: "POST",
+            headers: new Headers({
+                'content-type': "application/json",
+                "authorization": localStorage.getItem("token")
+            }),
+            body: JSON.stringify(contributionObjet)
         })
+            .then((res) => {
+                if (res.status == 200) {
+                    alert("contribution créé avec succès")
+                } else if (res.status == 400) {
+                    alert("Erreur dans le dépôt")
+                }
+            })
     }
 </script>
 
-    <!-- Affiche les conférences disponibles -->
-    <script>
-    let xhr = new XMLHttpRequest() ;
-    xhr.onload = function(res){
-        let liste = document.getElementById("titreConference") ;
-        let mesTitres = JSON.parse(xhr.response) 
+<!-- Affiche les conférences disponibles -->
+<script>
+    let xhr = new XMLHttpRequest();
+    xhr.onload = function (res) {
+        let liste = document.getElementById("titreConference");
+        let mesTitres = JSON.parse(xhr.response)
 
         mesTitres.forEach(element => {
             let option = document.createElement("option")
@@ -70,24 +75,23 @@
     xhr.send();
 </script>
 
+<!-- Liste les contributions qui ont été ajoutées -->
 <script>
-
     const Http = new XMLHttpRequest();
-    const url='http://localhost:3002/contributions';
+    const url = 'http://localhost:3002/contributions';
     Http.open("GET", url);
     Http.send();
-    Http.onreadystatechange = function(){
-        if(this.readyState == 4 && this.status == 200){
+    Http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
 
             let data = JSON.parse(Http.responseText)
             let ul = document.getElementById("listeDesContributionAjoutees");
-            for (let i = 0 ; i < data.length ; i++){
+            for (let i = 0; i < data.length; i++) {
                 let li = document.createElement("li");
                 li.appendChild(document.createTextNode(data[i].titre));
                 ul.appendChild(li);
             }
         }
     }
-
 </script>
 </html>

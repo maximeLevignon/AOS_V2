@@ -31,45 +31,48 @@
             </form>
             <button onclick="creationConference()">Créer une conférence</button>
         </div>
+    </body>
 
-        <script> 
-            let req = new XMLHttpRequest();
-            const url='http://localhost:3002/conferences/titres';
-                
-            req.onreadystatechange = function(){
-                if(this.readyState == 4 && this.status == 200){
-                        
-                    let data = JSON.parse(req.responseText)
-                    let ul = document.getElementById("listeDesConferencesExistantes");
-                    for (let i = 0 ; i < data.length ; i++){
-                        let li = document.createElement("li");
-                        li.appendChild(document.createTextNode(data[i].titre));
-                        ul.appendChild(li);
-                    }
+    <script>
+        let req = new XMLHttpRequest();
+        const url='http://localhost:3002/conferences/titres';
+
+        req.onreadystatechange = function(){
+            if(this.readyState == 4 && this.status == 200){
+
+                let data = JSON.parse(req.responseText)
+                let ul = document.getElementById("listeDesConferencesExistantes");
+                for (let i = 0 ; i < data.length ; i++){
+                    let li = document.createElement("li");
+                    li.appendChild(document.createTextNode(data[i].titre));
+                    ul.appendChild(li);
                 }
             }
+        }
 
-            req.open("GET", url, true);
-            req.send();
-        </script>
-        <script>
-            let xhr = new XMLHttpRequest() ;
+        req.open("GET", url, true);
+        req.send();
+    </script>
 
-            xhr.onload = function(res){
-                let liste = document.getElementById("membreDuComite") ;
-                let membresDuComite = JSON.parse(xhr.response)
-            
-                membresDuComite.forEach(element => {
-                    let option = document.createElement("option")
-                    option.text = element.login;
-                    option.value = element.login;
-                    liste.append(option);
-                });
-            }
-            xhr.open("GET", "http://localhost:3002/users/MDC/login", true);
-            xhr.send();
-        </script>
-    </body>
+    <script>
+        let xhr = new XMLHttpRequest() ;
+
+        xhr.onload = function(res){
+            let liste = document.getElementById("membreDuComite") ;
+            let membresDuComite = JSON.parse(xhr.response)
+
+            membresDuComite.forEach(element => {
+                let option = document.createElement("option")
+                option.text = element.login;
+                option.value = element.login;
+                liste.append(option);
+            });
+        }
+        xhr.open("GET", "http://localhost:3002/users/MDC/login", true);
+        xhr.send();
+    </script>
+
+
     <script>
         function creationConference(){
 

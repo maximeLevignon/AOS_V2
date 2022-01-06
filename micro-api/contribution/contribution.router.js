@@ -8,26 +8,22 @@ let StatusCodes = require('http-status-codes').StatusCodes
  *Retourne les contributions
  */
 router.get('/', (req, res) =>{
-    Contribution.find({}, {})
+    const filter = {}
+    if(req.query.idConference){
+        filter.idConference = req.query.idConference
+    }
+    Contribution.find(filter, {})
         .then(contributions => res.status(StatusCodes.OK).json(contributions))
         .catch(error => res.status(StatusCodes.BAD_REQUEST).json({ error }))
 })
 
 /**
-*Retourne les contributions filtrées sur un Id
+*Retourne la contributions en fonction de son Id
 */
-router.get('/id', (req, res) =>{
-    Contribution.find({}, {})
-        .then(contributionsById => res.status(StatusCodes.OK).json(contributionById))
-        .catch(error => res.status(StatusCodes.BAD_REQUEST).json({ error }))
-})
-
-/**
- *Retourne les contributions filtrées sur un Id
- */
-router.get('/id', (req, res) =>{
-    Contribution.find({}, {})
-        .then(contributionsByConference => res.status(StatusCodes.OK).json(contributionsByConference))
+router.get('/:id', (req, res) =>{
+    let id = req.params.id
+    Contribution.findById(id)
+        .then(contributionsById => res.status(StatusCodes.OK).json(contributionsById))
         .catch(error => res.status(StatusCodes.BAD_REQUEST).json({ error }))
 })
 
@@ -35,59 +31,54 @@ router.get('/id', (req, res) =>{
  * Crée une contribution et met le fichier pdf dans contributions
  */
 router.post('/', (req, res) => {
+    let payload = validateJWT(req?.headers?.authorization)
+    console.log(payload)
     console.log(req.body)
     console.log(req.files)
     //let fichierRecu = req.files.fichierContribution
     //let fichierRecu = req.body.fichier;
     //console.log(fichierRecu);
     //fichierRecu.mv(__dirname + '/../PDF_Files/' + fichierRecu.name, function(err) {
-    const contribution = new Contribution({
-        auteur: "req.body.titre,",//recuperer jwt
-        titre: req.body.titre,
-        conference: req.body.conference,
-        statut: req.body.statut,
-        date_publication: new Date(),
-        nombre_review: 0,
-        score_review: 0,
-        //fichier: "PDF_Files/" + fichierRecu
-    });
+    if(payload){
+        const contribution = new Contribution({
+            auteur: payload.id,
+            titre: req.body.titre,
+            idConference: req.body.idConference,
+            statut: req.body.statut,
+            date_publication: new Date(),
+            notes: req.body.notes
+            //fichier: "PDF_Files/" + fichierRecu
+        });
 
-    contribution.save().then(() => {
-        alert("contribution déposé avec succès");
-        res.status(StatusCodes.OK).json(contribution)
-    }).catch(
-        (error) => {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                error: error
-            });
-        }
-    )
-})
-;
+        contribution.save().then(() => {
+            res.status(StatusCodes.OK).json(contribution)
+        }).catch(
+            (error) => {
+                res.status(StatusCodes.BAD_REQUEST).json({error: error});
+            }
+        )
+    } else {
+        res.status(StatusCodes.UNAUTHORIZED)
+    }
+});
 //});
 
-/**
- * Note une contribution 
- * 61d5a28605b3b55cc45e53c2
- */
-router.put('/:id', (req, res) =>{
-    let id = req.params.id
-    let scoreSoumis = 10 ;
-    Contribution.find({_id : id})
+router.post('/:id/notes', (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
-    .then(contribution => {
-        console.log(contribution[0])
-        console.log(contribution[0].nombre_review)
-        console.log(contribution[0].total_review)
-        let nombre_reviewMisAJour = contribution[0].nombre_review + 1
-        let total_reviewMisAJour = contribution[0].total_review + scoreSoumis
-        let moyenne_reviewMisAJour = total_reviewMisAJour / nombre_reviewMisAJour
-
-        console.log(nombre_reviewMisAJour)
-        console.log(total_reviewMisAJour)
-        console.log(moyenne_reviewMisAJour)
-    })
-
-    res.status(200).json("OK")
+    if (payload) {
+        let id = req.params.id
+        Contribution.findById(id)
+            .then(async contribution => {
+                contribution.notes.push(req.body.note)
+                await contribution.save()
+                res.status(StatusCodes.OK).json(contribution)
+            }).catch(
+            (error) => {
+                res.status(StatusCodes.BAD_REQUEST).json({error: error});
+            }
+        )
+    } else {
+        res.status(StatusCodes.UNAUTHORIZED)
+    }
 })
 module.exports = router ;

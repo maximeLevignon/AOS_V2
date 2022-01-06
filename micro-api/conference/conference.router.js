@@ -28,6 +28,17 @@ router.get('/', (req, res) => {
 });
 
 /**
+ * Retourne les contributions selon l'id d'une conférence
+ */
+router.get('/contributions', (req, res) => {
+    console.log(req.body)
+    Conference.find({_id: req.body}, {titre : 1, _id : 0})
+
+        .then(contribByConf => res.status(StatusCodes.OK).json(contribByConf))
+        .catch(error => res.status(StatusCodes.BAD_REQUEST).json({ error }))
+});
+
+/**
  * Créé une conférence
  * Vérifie la clé privée du JWT
  */

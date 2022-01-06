@@ -87,9 +87,19 @@
 <script>
 
     function onListeDesConfChange(){
-        let liste = document.getElementById("listeDesConferencesExistantes")
-        let idConfChoisie = liste.value;
+        let listeConf = document.getElementById("listeDesConferencesExistantes")
+        let idConfChoisie = listeConf.value;
         console.log(idConfChoisie)
+        fetch("http://localhost:3002/conferences/contributions", {method : "GET", headers : new Headers({'content-type' : "application/json"})})
+            .then((res) => {
+            if(res.status == 200){
+                alert("Les contributions ont été récupérées avec succès")
+                let listeContrib = document.getElementById("listeDesContributionsParConférence")
+
+            } else if (res.status == 400){
+                alert("Erreur dans la récupération des contributions")
+            }
+        })
         //associer la contrib avec l'id de la conf
     }
     /*let xhr = new XMLHttpRequest();
@@ -145,7 +155,6 @@
             contrib : document.getElementById("listeDesContributionsParConférence").value ,
             note : document.getElementById("Note").value,
         }
-
         console.log(noteObjet)
         fetch("http://localhost:3002/conferences", {method : "POST", headers : new Headers({'content-type' : "application/json","authorization":localStorage.getItem("token")}) ,body : JSON.stringify(noteObjet)}).
         then((res) => {

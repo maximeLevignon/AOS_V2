@@ -51,6 +51,8 @@
         })
     }
 </script>
+
+    <!-- Affiche les conférences disponibles -->
     <script>
     let xhr = new XMLHttpRequest() ;
     xhr.onload = function(res){
@@ -60,11 +62,11 @@
         mesTitres.forEach(element => {
             let option = document.createElement("option")
             option.text = element.titre;
-            option.value = element.titre;
+            option.value = element._id;
             liste.append(option);
         });
     }
-    xhr.open("get", "http://localhost:3002/conferences/titres", true);
+    xhr.open("get", "http://localhost:3002/conferences", true);
     xhr.send();
 </script>
 

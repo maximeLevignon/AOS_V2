@@ -6,6 +6,7 @@ const conferenceSchema = mongoose.Schema({
   domaine:{type:String},
   organisateur: { type: String, required: true },
   membre_comite_selection: { type: Object, required: true },
+  contributions: {type : [String], required: false},
   date_contrib_fin:{type:String},
   date_event_debut:{type:String},
   date_event_fin:{type:String},

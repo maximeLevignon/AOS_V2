@@ -51,48 +51,111 @@
 <body>
 <div>
     <form>
-        <select id="listeDesConferencesExistantes"></select>
-
-        <select>
-            <option value ="Papier A - Conférence A">Papier A - Conférence A</option>
-            <option value ="Papier B - Conférence B">Papier B - Conférence B</option>
-            <option value ="Papier C - Conférence C">Papier C - Conférence C</option>
+        <select id="listeDesConferencesExistantes" onchange="onListeDesConfChange()">
         </select>
-        <div class="rate">
-            <input type="radio" id="star5" name="rate" value="5" />
-            <label for="star5" title="text">5 stars</label>
-            <input type="radio" id="star4" name="rate" value="4" />
-            <label for="star4" title="text">4 stars</label>
-            <input type="radio" id="star3" name="rate" value="3" />
-            <label for="star3" title="text">3 stars</label>
-            <input type="radio" id="star2" name="rate" value="2" />
-            <label for="star2" title="text">2 stars</label>
-            <input type="radio" id="star1" name="rate" value="1" />
-            <label for="star1" title="text">1 star</label>
-          </div>
-
+        <select id="listeDesContributionsParConférence"></select>
+        <input type="textarea" id="Note" placeholder="Votre note">
         <input type="textarea" name="commentaire" placeholder="Votre commentaire">
-        <input type="submit" value="Valider">
+        <button onclick="noterConference()">Valider la notation</button>
     </form>
 </div>
 </body>
+
+<!-- Récupèrer les titres des conférences pour les afficher dans la liste des conférences existantes-->
 <script>
     let req = new XMLHttpRequest();
-    const url='http://localhost:3002/conferences/titres';
+    const confTitres='http://localhost:3002/conferences';
 
-    req.onreadystatechange = function(){
+    req.onload = function(){
         if(this.readyState == 4 && this.status == 200){
 
             let data = JSON.parse(req.responseText)
             let liste = document.getElementById("listeDesConferencesExistantes");
             for (let i = 0 ; i < data.length ; i++){
                 let opt = document.createElement('option')
+                opt.setAttribute("value", data[i]._id)
                 opt.appendChild(document.createTextNode(data[i].titre))
                 liste.appendChild(opt)
             }
         }
     }
-    req.open("GET", url, true);
+    req.open("GET", confTitres, true);
     req.send();
 </script>
+
+<!-- Afficher les contributions selon la conférence sélectionnée -->
+<script>
+
+    function onListeDesConfChange(){
+        let liste = document.getElementById("listeDesConferencesExistantes")
+        let idConfChoisie = liste.value;
+        console.log(idConfChoisie)
+        //associer la contrib avec l'id de la conf
+    }
+    /*let xhr = new XMLHttpRequest();
+    const confs='http://localhost:3002/contributions';
+
+    xhr.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            let listeConf = document.getElementById("listeDesConferencesExistantes")
+            let confChoisie = listeConf.value
+            console.log(listeConf)
+            console.log(confChoisie)
+            let data = JSON.parse(xhr.responseText)
+            let liste = document.getElementById("listeDesContributionsParConférence");
+            for (let i = 0 ; i < data.length ; i++){
+                if(data[i].conference == confChoisie){
+                    let opt = document.createElement('option')
+                    opt.appendChild(document.createTextNode(data[i].titre))
+                    liste.appendChild(opt)
+                }
+
+            }
+        }
+    }
+    let data = JSON.parse(xhr.response)
+    for (let i = 0 ; i < data.length ; i++) {
+        var d_name = data[i].titre;
+    }
+    var dis_update = function() {
+
+        var conf = document.getElementById("listeDesContributionsParConférence");
+        var confChoisie = conf.val
+        var dis = $('#listeDesContributionsParConférence').empty();
+        for (let i = 0 ; i < data.length ; i++) {
+            var d_name = data[i].titre;
+            dis.append($('<option>').val(d_name).text(d_name));
+        }
+    }
+    $('#listeDesConferencesExistantes').change(dis_update);
+    dis_update();
+
+    xhr.open("GET", confs, true);
+    xhr.send();*/
+
+
+</script>
+
+<!-- Valider la notation d'une contribution -->
+<script>
+    function noterConference(){
+
+        let noteObjet = {
+            conf : document.getElementById("listeDesConferencesExistantes").value,
+            contrib : document.getElementById("listeDesContributionsParConférence").value ,
+            note : document.getElementById("Note").value,
+        }
+
+        console.log(noteObjet)
+        fetch("http://localhost:3002/conferences", {method : "POST", headers : new Headers({'content-type' : "application/json","authorization":localStorage.getItem("token")}) ,body : JSON.stringify(noteObjet)}).
+        then((res) => {
+            if(res.status == 200){
+                alert("La notation a été envoyée avec succès")
+            } else if (res.status == 400){
+                alert("Erreur dans l'envoi de la notation")
+            }
+        })
+    }
+</script>
+
 </html>

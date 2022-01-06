@@ -1,8 +1,4 @@
-
 const mongoose = require('mongoose');
-
-
-
 const uriMongo = "mongodb+srv://adminTotoConf:xtnYgNHYYBTiTAiy@cluster0.svras.mongodb.net/BDDTEST?retryWrites=true&w=majority";
 
 

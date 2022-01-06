@@ -9,7 +9,7 @@ const contributionSchema = mongoose.Schema({
     nombre_review:{type: Number, required: true},
     total_review:{type: Number, required: true},
     moyenne_review:{type:Number, required: true},
-    fichier:{type: String, required : true},
+    fichier:{type: String, required : false},
 });
 
 module.exports = mongoose.model('Contribution', contributionSchema);

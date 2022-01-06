@@ -3,7 +3,24 @@ let router = express.Router()
 let Contribution = require('./contribution.model')
 const validateJWT = require("../auth/validatorToken");
 let StatusCodes = require('http-status-codes').StatusCodes
+const multer  = require('multer');
+const { then } = require('../database');
 
+
+
+
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './contribution/PDF_Files/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname) //Appending .pdf
+    }
+  })
+  
+  const upload = multer({ storage: storage });
 /**
  *Retourne les contributions
  */
@@ -30,11 +47,9 @@ router.get('/:id', (req, res) =>{
 /**
  * Crée une contribution et met le fichier pdf dans contributions
  */
-router.post('/', (req, res) => {
+router.post('/',  (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
-    console.log(payload)
-    console.log(req.body)
-    console.log(req.files)
+
     //let fichierRecu = req.files.fichierContribution
     //let fichierRecu = req.body.fichier;
     //console.log(fichierRecu);
@@ -61,7 +76,21 @@ router.post('/', (req, res) => {
         res.status(StatusCodes.UNAUTHORIZED)
     }
 });
-//});
+
+router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
+    let id = req.params.id
+    console.log()
+    let payload = validateJWT(req?.headers?.authorization)
+    if(payload){
+        Contribution.findByIdAndUpdate(id,{ 
+            fichier : req.file.path
+        }).then((contribution) => {
+            res.status(StatusCodes.OK).json(contribution)
+        }).catch((error)=>{
+            res.status(StatusCodes.BAD_REQUEST).json({error : error})
+        })
+    } 
+});
 
 router.post('/:id/notes', (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)

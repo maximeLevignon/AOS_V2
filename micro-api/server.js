@@ -9,14 +9,13 @@ const bodyParser = require('body-parser')
 const database = require('./database.js')
 const path = require('path')
 const { cp } = require('fs');
-const fileUpload = require('express-fileupload');
 const app = express()
 const port = 3002
+
 let cookieParser = require('cookie-parser')
 
 
 app.use(cookieParser())
-app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(cors())
 app.use('/contributions', contributionRouter)

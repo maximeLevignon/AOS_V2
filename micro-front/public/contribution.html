@@ -20,7 +20,7 @@
             <input type="text" id="titreContribution">
             <input type="file" accept=".pdf" id="fichierContribution" name="fichierContribution">
             <label>Conférence : </label>
-            <select id="titreConference" ></select>
+            <select id="titreConference"></select>
         </form>
         <button onclick="publierContribution()"> Publier la contribution</button>
     </div>
@@ -35,10 +35,15 @@
             idConference: document.getElementById("titreConference").value,
             statut: "OK",
             date_publication: new Date(),
-            notes: []
-            //fichier:document.getElementById("fichierContribution").value
+            notes: [],
+           // fichier:document.getElementById("fichierContribution").value
         }
-        console.log(contributionObjet.idConference)
+      
+        let fichier = document.getElementById("fichierContribution")
+        const formdata = new FormData()
+        formdata.append("fichierContribution",fichier.files[0])
+        console.log(formdata)
+        
         fetch("http://localhost:3002/contributions", {
             method: "POST",
             headers: new Headers({
@@ -47,9 +52,23 @@
             }),
             body: JSON.stringify(contributionObjet)
         })
-            .then((res) => {
-                if (res.status == 200) {
+            .then(async (res) => {
+                if (res.status == 200) {    
                     alert("contribution créé avec succès")
+                    fetch(`http://localhost:3002/contributions/${(await res.json())._id}/upload`, {
+                    method : "PUT",
+                    headers: new Headers({
+               
+                        "authorization": localStorage.getItem("token")
+                    }),
+                    body: formdata
+                }).then((res) =>{
+                    if(res.status == 200){
+                        console.log("uploaded")
+                    } else {
+                        console.log("fail")
+                    }
+                })
                 } else if (res.status == 400) {
                     alert("Erreur dans le dépôt")
                 }

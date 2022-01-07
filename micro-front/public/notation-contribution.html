@@ -99,6 +99,7 @@
         })
         let listeConf = document.getElementById("listeDesConferencesExistantes")
         let choixConf = listeConf.value
+        console.log(choixConf)
         let url = "http://localhost:3002/contributions?idConference="+choixConf
         fetch(url, {
             method: "GET",

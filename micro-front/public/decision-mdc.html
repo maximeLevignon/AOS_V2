@@ -42,6 +42,7 @@
 
 <!-- Afficher les contributions selon la conférence sélectionnée -->
 <script>
+
     function onListeDesConfChange() {
         let listeContrib = document.getElementById("listeDesContributionsParConférence")
         Array.from(listeContrib.children).forEach((element, index) =>{
@@ -64,15 +65,34 @@
                     let resContrib = await res.json()
                     console.log(resContrib)
                     resContrib.forEach(element =>{
-                        let opt = document.createElement('li')
-                        opt.setAttribute("value", element._id)
-                        opt.appendChild(document.createTextNode(element.titre))
-                        listeContrib.appendChild(opt)
+                        if(element.fichier){
+                            let opt = document.createElement('li')
+                            //element.sendFile(path.resolve('../../micro-api/'+element.fichier));
+                            opt.setAttribute("value", element._id)
+                            opt.setAttribute("onclick", "toto()")
+                            console.log(opt);
+                            opt.appendChild(document.createTextNode(element.titre))
+                            listeContrib.appendChild(opt)
+                        }
                     })
                 } else if (res.status == 400) {
                     alert("Erreur dans l'envoi de la notation")
                 }
             })
+    }
+
+    function toto() {
+        let url = "http://localhost:3002/contributions/fichier"
+        fetch(url,{
+            method: "GET"
+        }).then((res) =>{
+            if(res.status == 200){
+                console.log("uploaded")
+            } else {
+                console.log("fail")
+            }
+        })
+        console.log("là")
     }
 </script>
 </html>

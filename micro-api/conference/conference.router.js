@@ -63,10 +63,9 @@ router.post('/', (req, res) => {
     if(payload){
         let id = payload.id
         //recuperer toutes les conférences où organisateur = id
-        Conference.find({organisateur : id})
+        Conference.find({membre_comite_selection : id})
         .then(conference => res.status(StatusCodes.OK).json(conference))
         .catch(error => res.status(StatusCodes.BAD_REQUEST).json({error}))
     }
-
  });
 module.exports = router ;

@@ -5,7 +5,7 @@ const validateJWT = require("../auth/validatorToken");
 let StatusCodes = require('http-status-codes').StatusCodes
 const multer  = require('multer');
 const { then } = require('../database');
-
+const path = require('path')
 
 
 
@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
       cb(null, file.originalname) //Appending .pdf
     }
-  })
+})
   
   const upload = multer({ storage: storage });
 /**
@@ -45,15 +45,20 @@ router.get('/:id', (req, res) =>{
 })
 
 /**
+ *Retourne la contributions en fonction de son Id
+ */
+router.get('/fichier', (req, res) =>{
+    let id = req.params.id
+    Contribution.findById(id)
+        .then(contributionsById => res.sendFile(path.resolve('./PDF_Files/'+contributionsById.fichier)))
+        .catch(error => res.status(StatusCodes.BAD_REQUEST).json({ error }))
+})
+
+/**
  * Crée une contribution et met le fichier pdf dans contributions
  */
 router.post('/',  (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
-
-    //let fichierRecu = req.files.fichierContribution
-    //let fichierRecu = req.body.fichier;
-    //console.log(fichierRecu);
-    //fichierRecu.mv(__dirname + '/../PDF_Files/' + fichierRecu.name, function(err) {
     if(payload){
         const contribution = new Contribution({
             auteur: payload.id,
@@ -62,7 +67,6 @@ router.post('/',  (req, res) => {
             statut: req.body.statut,
             date_publication: new Date(),
             notes: req.body.notes
-            //fichier: "PDF_Files/" + fichierRecu
         });
 
         contribution.save().then(() => {
@@ -79,7 +83,6 @@ router.post('/',  (req, res) => {
 
 router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
     let id = req.params.id
-    console.log()
     let payload = validateJWT(req?.headers?.authorization)
     if(payload){
         Contribution.findByIdAndUpdate(id,{ 

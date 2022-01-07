@@ -1,2 +1,4 @@
 Changer les StatusCodes Unauthorized
 Changer les méthodes de PUT (pas les notes des contribs)
+Accès aux pages réglementées par le rôle
+Faire une route DELETE

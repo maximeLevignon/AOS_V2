@@ -67,6 +67,7 @@
 <!-- Récupèrer les titres des conférences pour les afficher dans la liste des conférences existantes-->
 <script>
     let req = new XMLHttpRequest();
+    
     const confTitres='http://localhost:3002/conferences';
 
     req.onload = function(){
@@ -83,6 +84,7 @@
         }
     }
     req.open("GET", confTitres, true);
+ 
     req.send();
 </script>
 

@@ -55,4 +55,18 @@ router.post('/', (req, res) => {
     }
 })
 
+/**
+ * Retourne toutes les conférences où la personne connectée est MDC
+ */
+ router.get('/MDC', (req, res) => {
+    let payload = validateJWT(req?.headers?.authorization)
+    if(payload){
+        let id = payload.id
+        //recuperer toutes les conférences où organisateur = id
+        Conference.find({organisateur : id})
+        .then(conference => res.status(StatusCodes.OK).json(conference))
+        .catch(error => res.status(StatusCodes.BAD_REQUEST).json({error}))
+    }
+
+ });
 module.exports = router ;

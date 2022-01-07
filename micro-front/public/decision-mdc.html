@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision MDC</title>
+</head>
+<body>
+    <label>Choisir une conférence à gérer</label>
+    <select onchange="onListeDesConfChange()" id="ConferencesDuMdc">
+        <option>témoin</option>
+    </select>
+    <ul id="listeDesContributionsParConférence">
+        <li>témoin</li>
+    </ul>
+</body>
+
+<!-- Récupèrer les titres des conférences du MDC connecté pour les afficher dans la liste des conférences -->
+<script>
+    let req = new XMLHttpRequest();
+    let url = "http://localhost:3002/conferences/MDC"
+
+    req.onload = function(){
+        if(this.readyState == 4 && this.status == 200){
+
+            let data = JSON.parse(req.responseText)
+            let listeConf = document.getElementById("ConferencesDuMdc");
+            for (let i = 0 ; i < data.length ; i++){
+                let opt = document.createElement('option')
+                opt.setAttribute("value", data[i]._id)
+                opt.appendChild(document.createTextNode(data[i].titre))
+                listeConf.appendChild(opt)
+            }
+        }
+    }
+    req.open("GET", url, true);
+    req.setRequestHeader("authorization", localStorage.getItem("token"))
+    req.send();
+    
+</script>
+
+<!-- Afficher les contributions selon la conférence sélectionnée -->
+<script>
+    function onListeDesConfChange() {
+        let listeContrib = document.getElementById("listeDesContributionsParConférence")
+        Array.from(listeContrib.children).forEach((element, index) =>{
+            if(index > 0){
+                listeContrib.removeChild(element)
+            }
+        })
+
+        let listeConf = document.getElementById("ConferencesDuMdc")
+        let choixConf = listeConf.value
+        console.log(choixConf)
+        let url = "http://localhost:3002/contributions?idConference="+choixConf
+        fetch(url, {
+            method: "GET",
+            headers: new Headers({'content-type': "application/json"})
+        })
+            .then(async (res) => {
+                if (res.status == 200) {
+                    let listeContrib = document.getElementById("listeDesContributionsParConférence")
+                    let resContrib = await res.json()
+                    console.log(resContrib)
+                    resContrib.forEach(element =>{
+                        let opt = document.createElement('li')
+                        opt.setAttribute("value", element._id)
+                        opt.appendChild(document.createTextNode(element.titre))
+                        listeContrib.appendChild(opt)
+                    })
+                } else if (res.status == 400) {
+                    alert("Erreur dans l'envoi de la notation")
+                }
+            })
+    }
+</script>
+</html>

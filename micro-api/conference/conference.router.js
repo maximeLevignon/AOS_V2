@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
             }
         );
     } else {
-        res.status(StatusCodes.UNAUTHORIZED).json()
+        res.status(StatusCodes.UNAUTHORIZED).json({error: "UNAUTHORIZED"})
     }
 })
 
@@ -73,7 +73,12 @@ router.post('/', (req, res) => {
         })
         .catch(error => res.status(StatusCodes.BAD_REQUEST).json({error}))
     } else{
-        res.status(StatusCodes.UNAUTHORIZED).json()
+        res.status(StatusCodes.UNAUTHORIZED).json({error: "UNAUTHORIZED"})
     }
  });
+
+/**
+ * Retourne les contributions liées à une conférence
+ */
+
 module.exports = router ;

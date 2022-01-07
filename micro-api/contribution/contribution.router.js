@@ -74,7 +74,7 @@ router.post('/',  (req, res) => {
             }
         )
     } else {
-        res.status(StatusCodes.UNAUTHORIZED)
+        res.status(StatusCodes.UNAUTHORIZED).json({error: "UNAUTHORIZED"})
     }
 });
 
@@ -127,7 +127,8 @@ router.post('/:id/notes', (req, res) => {
             }
         )
     } else {
-        res.status(StatusCodes.UNAUTHORIZED)
+        res.status(StatusCodes.UNAUTHORIZED).json({error: "UNAUTHORIZED"})
     }
 })
+
 module.exports = router ;

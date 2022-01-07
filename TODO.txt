@@ -1,4 +1,6 @@
-Changer les StatusCodes Unauthorized
-Changer les méthodes de PUT (pas les notes des contribs)
 Accès aux pages réglementées par le rôle
 Faire une route DELETE
+    - delete une contrib, en tant qu'auteur ou organisateur
+Conference/Contributions ?
+    --> liste des contributions dans une conférence
+    --> Création-conference --> faire les liens hypertextes comme pour MDC

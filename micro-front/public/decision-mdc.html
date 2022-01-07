@@ -44,8 +44,8 @@
 
     function onListeDesConfChange() {
         let listeContrib = document.getElementById("listeDesContributionsParConférence")
-        Array.from(listeContrib.children).forEach((element, index) =>{
-            if(index > 0){
+        Array.from(listeContrib.children).forEach((element, index) => {
+            if (index > 0) {
                 listeContrib.removeChild(element)
             }
         })
@@ -53,7 +53,7 @@
         let listeConf = document.getElementById("ConferencesDuMdc")
         let choixConf = listeConf.value
         console.log(choixConf)
-        let url = "http://localhost:3002/contributions?idConference="+choixConf
+        let url = "http://localhost:3002/contributions?idConference=" + choixConf
         fetch(url, {
             method: "GET",
             headers: new Headers({'content-type': "application/json"})
@@ -63,37 +63,58 @@
                     let listeContrib = document.getElementById("listeDesContributionsParConférence")
                     let resContrib = await res.json()
                     console.log(resContrib)
-                    resContrib.forEach(element =>{
-                        if(element.fichier){
-                            let opt = document.createElement('li')
+                    resContrib.forEach(element => {
+                        console.log(element);
+                        let li = document.createElement('li')
+                        let div = document.createElement('div')
+                        li.append(div)
+
+                        // Affichage fichier
+                        if (element.fichier) {
                             let baliseA = document.createElement('a')
                             baliseA.setAttribute("href", "http://localhost:3002/contributions/" + element._id + "/fichier")
                             baliseA.setAttribute("target", "_blank")
                             baliseA.appendChild(document.createTextNode(element.titre))
-                            opt.append(baliseA)
-                            opt.setAttribute("value", element._id)
-                            listeContrib.appendChild(opt)
+                            div.append(baliseA)
+                        } else {
+                            let span = document.createElement('span')
+                            span.appendChild(document.createTextNode("Pas de fichier"))
                         }
+
+                        // Affichage de la moyenne
+                        let span = document.createElement('span')
+                        if (element.notes.length > 0) {
+                            let somNote = element.notes.reduce((a, b) => a + b, 0)
+                            let averageNote = somNote / element.notes.length
+                            span.appendChild(document.createTextNode("     Moyenne de la contribution : " + averageNote))
+                        } else {
+                            span.appendChild(document.createTextNode("     Pas de notes"))
+                        }
+                        div.append(span)
+
+                        // Affichage Checkbox
+                        if (element.fichier){
+                            let checkbox = document.createElement('input')
+                            checkbox.setAttribute("type", "checkbox")
+                            checkbox.checked = element.statut
+                            checkbox.onclick = ()=>{
+                                console.log(checkbox.checked);
+                                fetch("http://localhost:3002/contributions/"+element._id, {
+                                    method: "PUT",
+                                    headers: new Headers({'content-type': "application/json", "authorization": localStorage.getItem("token")}),
+                                    body: JSON.stringify({statut : checkbox.checked})
+                                })
+                            }
+                            div.append(checkbox)
+                        }
+
+                        listeContrib.appendChild(li)
+                        li.setAttribute("value", element._id)
                     })
                 } else if (res.status == 400) {
                     alert("Erreur dans l'envoi de la notation")
                 }
             })
     }
-</script>
-<script>
-     /*  function toto() {
-        let url = "http://localhost:3002/contributions/id/fichier"
-        fetch(url,{
-            method: "GET"
-        }).then((res) =>{
-            if(res.status == 200){
-                console.log("uploaded")
-            } else {
-                console.log("fail")
-            }
-        })
-        console.log("là")
-    }*/
 </script>
 </html>

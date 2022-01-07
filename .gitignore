@@ -1,4 +1,5 @@
 .idea
+/micro-api/contribution/PDF_Files
 # Logs
 logs
 *.log

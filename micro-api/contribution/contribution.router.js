@@ -6,10 +6,7 @@ let StatusCodes = require('http-status-codes').StatusCodes
 const multer  = require('multer');
 const { then } = require('../database');
 const path = require('path')
-
-
-
-
+const {UNAUTHORIZED} = require("http-status-codes");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -81,6 +78,10 @@ router.post('/',  (req, res) => {
     }
 });
 
+
+/**
+ * Upload du fichier de contribution
+ */
 router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
@@ -93,6 +94,22 @@ router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
             res.status(StatusCodes.BAD_REQUEST).json({error : error})
         })
     } 
+});
+
+router.put('/:id',(req, res) => {
+    let id = req.params.id
+    let payload = validateJWT(req?.headers?.authorization)
+    console.log(req.body);
+    if(payload){
+        Contribution.findByIdAndUpdate(id, req.body, {new : true})
+            .then((contribution) => {
+            res.status(StatusCodes.OK).json(contribution)
+        }).catch((error)=>{
+            res.status(StatusCodes.BAD_REQUEST).json({error : error})
+        })
+    } else {
+        res.status(StatusCodes.UNAUTHORIZED).json({error : "UNAUTHORIZED"})
+    }
 });
 
 router.post('/:id/notes', (req, res) => {

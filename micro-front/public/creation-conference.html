@@ -62,9 +62,10 @@
             let membresDuComite = JSON.parse(xhr.response)
 
             membresDuComite.forEach(element => {
+                console.log(element)
                 let option = document.createElement("option")
                 option.text = element.login;
-                option.value = element.login;
+                option.value = element._id;
                 liste.append(option);
             });
         }

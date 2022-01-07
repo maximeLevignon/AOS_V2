@@ -20,11 +20,10 @@
 <script>
     let req = new XMLHttpRequest();
     let url = "http://localhost:3002/conferences/MDC"
-
     req.onload = function(){
         if(this.readyState == 4 && this.status == 200){
 
-            let data = JSON.parse(req.responseText)
+            let data = JSON.parse(req.responseText) 
             let listeConf = document.getElementById("ConferencesDuMdc");
             for (let i = 0 ; i < data.length ; i++){
                 let opt = document.createElement('option')
@@ -67,11 +66,12 @@
                     resContrib.forEach(element =>{
                         if(element.fichier){
                             let opt = document.createElement('li')
-                            //element.sendFile(path.resolve('../../micro-api/'+element.fichier));
+                            let baliseA = document.createElement('a')
+                            baliseA.setAttribute("href", "http://localhost:3002/contributions/" + element._id + "/fichier")
+                            baliseA.setAttribute("target", "_blank")
+                            baliseA.appendChild(document.createTextNode(element.titre))
+                            opt.append(baliseA)
                             opt.setAttribute("value", element._id)
-                            opt.setAttribute("onclick", "toto()")
-                            console.log(opt);
-                            opt.appendChild(document.createTextNode(element.titre))
                             listeContrib.appendChild(opt)
                         }
                     })
@@ -80,9 +80,10 @@
                 }
             })
     }
-
-    function toto() {
-        let url = "http://localhost:3002/contributions/fichier"
+</script>
+<script>
+     /*  function toto() {
+        let url = "http://localhost:3002/contributions/id/fichier"
         fetch(url,{
             method: "GET"
         }).then((res) =>{
@@ -93,6 +94,6 @@
             }
         })
         console.log("là")
-    }
+    }*/
 </script>
 </html>

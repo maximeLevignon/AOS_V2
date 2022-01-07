@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
             }
         );
     } else {
-        res.status(StatusCodes.UNAUTHORIZED)
+        res.status(StatusCodes.UNAUTHORIZED).json()
     }
 })
 
@@ -59,13 +59,21 @@ router.post('/', (req, res) => {
  * Retourne toutes les conférences où la personne connectée est MDC
  */
  router.get('/MDC', (req, res) => {
+     //let id = req.params.id
+
     let payload = validateJWT(req?.headers?.authorization)
     if(payload){
         let id = payload.id
+        console.log(id)
         //recuperer toutes les conférences où organisateur = id
         Conference.find({membre_comite_selection : id})
-        .then(conference => res.status(StatusCodes.OK).json(conference))
+        .then(conference => {
+            console.log(conference)
+            res.status(StatusCodes.OK).json(conference)
+        })
         .catch(error => res.status(StatusCodes.BAD_REQUEST).json({error}))
+    } else{
+        res.status(StatusCodes.UNAUTHORIZED).json()
     }
  });
 module.exports = router ;

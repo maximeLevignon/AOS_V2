@@ -28,7 +28,7 @@ router.post('/', (req, res) =>{
  * Retourne tous les membres de comités
  */
 router.get('/MDC/login' , (req, res) =>{
-  User.find({roles : "Membre du comité"},{ login : 1, _id : 0})
+  User.find({roles : "Membre du comité"},{ login : 1, _id : 1})
         .then(mdc => res.status(StatusCodes.OK).json(mdc))
         .catch(error => res.status(StatusCodes.BAD_REQUEST).json({ error }))
 })

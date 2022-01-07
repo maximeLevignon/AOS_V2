@@ -45,12 +45,12 @@ router.get('/:id', (req, res) =>{
 })
 
 /**
- *Retourne la contributions en fonction de son Id
+ *Retourne le fichier 
  */
-router.get('/fichier', (req, res) =>{
+router.get('/:id/fichier', (req, res) =>{
     let id = req.params.id
     Contribution.findById(id)
-        .then(contributionsById => res.sendFile(path.resolve('./PDF_Files/'+contributionsById.fichier)))
+        .then(contributionsById => res.sendFile(path.resolve( __dirname + '/PDF_Files/'+ contributionsById.fichier)))
         .catch(error => res.status(StatusCodes.BAD_REQUEST).json({ error }))
 })
 
@@ -86,7 +86,7 @@ router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
     if(payload){
         Contribution.findByIdAndUpdate(id,{ 
-            fichier : req.file.path
+            fichier : req.file.originalname
         }).then((contribution) => {
             res.status(StatusCodes.OK).json(contribution)
         }).catch((error)=>{

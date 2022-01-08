@@ -4,9 +4,6 @@ let User = require('../user/user.model')
 let jwt = require('jsonwebtoken')
 let StatusCodes = require('http-status-codes').StatusCodes
 
-
-
-
 //authentifier un User, utilisé sur connexion
 router.post('/', (req, res) =>{
 

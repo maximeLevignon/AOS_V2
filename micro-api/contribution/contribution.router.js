@@ -99,12 +99,26 @@ router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
 router.put('/:id',(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
-    console.log(req.body);
     if(payload){
         Contribution.findByIdAndUpdate(id, req.body, {new : true})
             .then((contribution) => {
             res.status(StatusCodes.OK).json(contribution)
         }).catch((error)=>{
+            res.status(StatusCodes.BAD_REQUEST).json({error : error})
+        })
+    } else {
+        res.status(StatusCodes.UNAUTHORIZED).json({error : "UNAUTHORIZED"})
+    }
+});
+
+router.delete('/:id',(req, res) => {
+    let id = req.params.id
+    let payload = validateJWT(req?.headers?.authorization)
+    if(payload){
+        Contribution.deleteOne({_id: id})
+            .then((contribution) => {
+                res.status(StatusCodes.OK).json({message: "Delete OK"})
+            }).catch((error)=>{
             res.status(StatusCodes.BAD_REQUEST).json({error : error})
         })
     } else {

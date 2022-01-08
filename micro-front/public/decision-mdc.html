@@ -36,7 +36,6 @@
     req.open("GET", url, true);
     req.setRequestHeader("authorization", localStorage.getItem("token"))
     req.send();
-    
 </script>
 
 <!-- Afficher les contributions selon la conférence sélectionnée -->
@@ -111,7 +110,7 @@
                         listeContrib.appendChild(li)
                         li.setAttribute("value", element._id)
                     })
-                } else if (res.status == 400) {
+                } else {
                     alert("Erreur dans l'envoi de la notation")
                 }
             })

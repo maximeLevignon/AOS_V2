@@ -26,7 +26,7 @@
     </div>
 </body>
 
-<!-- Publie une contribution -->
+<!-- Publier une contribution -->
 <script>
     function publierContribution() {
 
@@ -94,21 +94,68 @@
 
 <!-- Liste les contributions qui ont été ajoutées -->
 <script>
-    const Http = new XMLHttpRequest();
-    const url = 'http://localhost:3002/contributions';
-    Http.open("GET", url);
-    Http.send();
-    Http.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+    let url = "http://localhost:3002/contributions"
+    fetch(url, {
+        method: "GET",
+        headers: new Headers({'content-type': "application/json"})
+    })
+        .then(async (res) => {
+            if (res.status == 200) {
+                let listeContrib = document.getElementById("listeDesContributionAjoutees")
+                let resContrib = await res.json()
+                resContrib.forEach(element => {
+                    let li = document.createElement('li')
+                    let div = document.createElement('div')
+                    li.append(div)
 
-            let data = JSON.parse(Http.responseText)
-            let ul = document.getElementById("listeDesContributionAjoutees");
-            for (let i = 0; i < data.length; i++) {
-                let li = document.createElement("li");
-                li.appendChild(document.createTextNode(data[i].titre));
-                ul.appendChild(li);
+                    // Affichage fichier
+                    if (element.fichier) {
+                        let baliseA = document.createElement('a')
+                        baliseA.setAttribute("href", "http://localhost:3002/contributions/" + element._id + "/fichier")
+                        baliseA.setAttribute("target", "_blank")
+                        baliseA.appendChild(document.createTextNode(element.titre))
+                        div.append(baliseA)
+                    } else {
+                        let span = document.createElement('span')
+                        span.appendChild(document.createTextNode("Pas de fichier"))
+                    }
+
+                    // Affichage Checkbox
+                    let checkbox = document.createElement('input')
+                    checkbox.setAttribute("type", "checkbox")
+                    div.append(checkbox)
+
+                    if (element) {
+                        let button = document.createElement('button')
+                        button.setAttribute("name", "Supprimer la contribution")
+                        button.innerHTML = "Supprimer la contribution"
+                        checkbox.onclick = ()=>{
+                            if (checkbox.checked == true) {
+                                console.log(checkbox.checked);
+                                div.append(button)
+                                button.onclick = () => {
+                                    if (confirm("Voulez-vous supprimer la contribution " + element.titre + " ?")) {
+                                        fetch("http://localhost:3002/contributions/" + element._id, {
+                                            method: "DELETE",
+                                            headers: new Headers({
+                                                'content-type': "application/json",
+                                                "authorization": localStorage.getItem("token")
+                                            }),
+                                        })
+
+                                    }
+                                }
+                            } else {
+                                div.removeChild(button)
+                            }
+                        }
+                    }
+                    listeContrib.appendChild(li)
+                    li.setAttribute("value", element._id)
+                })
+            } else {
+                alert("Erreur dans l'envoi de la notation")
             }
-        }
-    }
+        })
 </script>
 </html>

@@ -16,7 +16,7 @@
     </ul>
 </body>
 
-<!-- Récupèrer les titres des conférences du MDC connecté pour les afficher dans la liste des conférences -->
+<!-- Récupérer les titres des conférences du MDC connecté pour les afficher dans la liste des conférences -->
 <script>
     let req = new XMLHttpRequest();
     let url = "http://localhost:3002/conferences/MDC"
@@ -100,7 +100,10 @@
                                 console.log(checkbox.checked);
                                 fetch("http://localhost:3002/contributions/"+element._id, {
                                     method: "PUT",
-                                    headers: new Headers({'content-type': "application/json", "authorization": localStorage.getItem("token")}),
+                                    headers: new Headers({
+                                        'content-type': "application/json",
+                                        "authorization": localStorage.getItem("token")
+                                    }),
                                     body: JSON.stringify({statut : checkbox.checked})
                                 })
                             }

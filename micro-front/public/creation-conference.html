@@ -33,6 +33,7 @@
         </div>
     </body>
 
+    <!-- Affiche la liste des conférences existantes -->
     <script>
         let req = new XMLHttpRequest();
         const url='http://localhost:3002/conferences/titres';
@@ -49,11 +50,11 @@
                 }
             }
         }
-
         req.open("GET", url, true);
         req.send();
     </script>
 
+    <!-- Affiche la liste des MDC disponibles -->
     <script>
         let xhr = new XMLHttpRequest() ;
 
@@ -69,11 +70,11 @@
                 liste.append(option);
             });
         }
-        xhr.open("GET", "http://localhost:3002/users/MDC/login", true);
+        xhr.open("GET", "http://localhost:3002/users/MDC", true)
         xhr.send();
     </script>
 
-
+    <!-- Publier une conférence -->
     <script>
         function creationConference(){
 

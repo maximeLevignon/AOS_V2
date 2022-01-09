@@ -74,8 +74,6 @@
         <button onclick="inscription()"  > Inscription </button>
     </div>
 
-
-
     <div>
         <form>
             <label>Login :
@@ -89,6 +87,7 @@
     </div>
 </body>
 
+<!-- Inscrit le user dans la base -->
 <script>
     function inscription(){
         let options = document.getElementById("rolesInsc").selectedOptions;
@@ -100,33 +99,43 @@
             roles : rolesValues
         }
 
-        fetch("http://localhost:3002/users", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(inscriptionObjet)}).
-        then((res) => {
-            alert("Compte créé ! ")
-        }).catch(error => {
+        fetch("http://localhost:3002/users", {
+            method: "POST",
+            headers: new Headers(
+                {'content-type': "application/json"})
+            , body: JSON.stringify(inscriptionObjet)
+        })
+            .then((res) => {
+                alert("Compte créé ! ")
+            }).catch(error => {
             alert("Erreur Création de compte ")
         })
     }
 
+    /**
+     * Fonction de connexion, crée le JWT
+     */
     function connexion(){
         let connexionObjet = {
             login : document.getElementById("loginConnexion").value,
             password : document.getElementById("passwordConnexion").value
         }
-        console.log(connexionObjet);
-
-        fetch("http://localhost:3002/auth", {method : "POST", headers : new Headers({'content-type' : "application/json"}) ,body : JSON.stringify(connexionObjet)}).
-        then(async(res) => {
-            if(res.status == 200){
-              localStorage.setItem("token",(await  res.json()).jwt)
-              window.location = "http://localhost:3001/menu.html"
-            } else {
-                alert("Login Mdp Incorrect")
-            }
-        }).catch(error => {
-            alert("Erreur login / MDP incorrect ")
+        fetch("http://localhost:3002/auth", {
+            method: "POST",
+            headers: new Headers({'content-type': "application/json"}),
+            body: JSON.stringify(connexionObjet)
         })
-
+            .then(async (res) => {
+                if (res.status == 200) {
+                    localStorage.setItem("token", (await res.json()).jwt)
+                    window.location = "http://localhost:3001/menu.html"
+                } else {
+                    alert("Login Mdp Incorrect")
+                }
+            })
+            .catch(error => {
+                alert("Erreur login / MDP incorrect ")
+            })
     }
 </script>
 </html>

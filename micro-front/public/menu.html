@@ -14,20 +14,92 @@
 </body>
 
 <script>
+    /**
+     * Vérifie le user est un Auteur et le redirige vers la page
+     */
     function redirectionContribution() {
-        window.location = "http://localhost:3001/contribution.html"
+        let url = "http://localhost:3002/users/Auteur/login"
+        fetch(url, {
+            method: "GET",
+            headers: new Headers({
+                'content-type': "application/json",
+                "authorization": localStorage.getItem("token")
+            })
+        })
+            .then((res) => {
+                console.log(res)
+                if (res.status == 200) {
+                    window.location = "http://localhost:3001/contribution.html"
+                } else {
+                    alert("Vous n'êtes pas autorisé à accéder à cette page")
+                }
+            })
     }
 
+    /**
+     * Vérifie le user est un Organisateur et le redirige vers la page
+     */
     function redirectionConference(){
-        window.location = "http://localhost:3001/creation-conference.html"
+        let url = "http://localhost:3002/users/Organisateur/login"
+        fetch(url, {
+            method: "GET",
+            headers: new Headers({
+                'content-type': "application/json",
+                "authorization": localStorage.getItem("token")
+            })
+        })
+            .then((res) => {
+                console.log(res)
+                if (res.status == 200) {
+                    window.location = "http://localhost:3001/creation-conference.html"
+                } else {
+                    alert("Vous n'êtes pas autorisé à accéder à cette page")
+                }
+            })
     }
 
+    /**
+     * Vérifie le user est un Reviewer et le redirige vers la page
+     */
     function redirectionNotationContribution(){
-        window.location = "http://localhost:3001/notation-contribution.html"
+        let url = "http://localhost:3002/users/Reviewer/login"
+        fetch(url, {
+            method: "GET",
+            headers: new Headers({
+                'content-type': "application/json",
+                "authorization": localStorage.getItem("token")
+            })
+        })
+            .then((res) => {
+                console.log(res)
+                if (res.status == 200) {
+                    window.location = "http://localhost:3001/notation-contribution.html"
+                } else {
+                    alert("Vous n'êtes pas autorisé à accéder à cette page")
+                }
+            })
     }
 
+    /**
+     * Vérifie le user est un MDC et le redirige vers la page
+     */
     function redirectionDecisionMDC(){
-        window.location = "http://localhost:3001/decision-mdc.html"
+        let url = "http://localhost:3002/users/MDC/login"
+        fetch(url, {
+            method: "GET",
+            headers: new Headers({
+                'content-type': "application/json",
+                "authorization": localStorage.getItem("token")
+            })
+        })
+            .then((res) => {
+                console.log(res)
+                if (res.status == 200) {
+                    window.location = "http://localhost:3001/decision-mdc.html"
+                } else {
+                    alert("Vous n'êtes pas autorisé à accéder à cette page")
+                }
+            })
     }
 </script>
 </html>

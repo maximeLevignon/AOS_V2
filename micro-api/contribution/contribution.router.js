@@ -8,6 +8,10 @@ const { then } = require('../database');
 const path = require('path')
 const {UNAUTHORIZED} = require("http-status-codes");
 
+/**
+ * Nécessaire pour le transfert de fichier,
+ * Paramètre la destination du fichier lors de la création de la contribution
+ */
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './contribution/PDF_Files/')
@@ -16,10 +20,11 @@ const storage = multer.diskStorage({
       cb(null, file.originalname) //Appending .pdf
     }
 })
-  
   const upload = multer({ storage: storage });
+
 /**
- *Retourne les contributions
+ * Retourne les contributions,
+ * Filres les contributions par l'Id de conférence
  */
 router.get('/', (req, res) =>{
     const filter = {}
@@ -32,7 +37,7 @@ router.get('/', (req, res) =>{
 })
 
 /**
-*Retourne la contributions en fonction de son Id
+* Retourne la contribution en fonction de son Id
 */
 router.get('/:id', (req, res) =>{
     let id = req.params.id
@@ -42,7 +47,7 @@ router.get('/:id', (req, res) =>{
 })
 
 /**
- *Retourne le fichier 
+ * Retourne le fichier selon l'Id de la contribution
  */
 router.get('/:id/fichier', (req, res) =>{
     let id = req.params.id
@@ -96,6 +101,9 @@ router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
     } 
 });
 
+/**
+ * Mise à jour du statut d'une contribution lors de la décision du MDC
+ */
 router.put('/:id',(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
@@ -111,6 +119,9 @@ router.put('/:id',(req, res) => {
     }
 });
 
+/**
+ * Supprime une contribution
+ */
 router.delete('/:id',(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
@@ -126,6 +137,9 @@ router.delete('/:id',(req, res) => {
     }
 });
 
+/**
+ * Mise à jour des notes d'une contribution lors de la review d'un Reviewer
+ */
 router.post('/:id/notes', (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
     if (payload) {

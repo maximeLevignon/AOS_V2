@@ -1,8 +1,7 @@
-Accès aux pages réglementées par le rôle
-Faire une route DELETE
-    - delete une contrib, en tant qu'auteur ou organisateur GOOD
-    --> Refresh le li au moment du click sur le bouton
-Conference/Contributions ?
+Conference/Contributions ? (à voir si nécessaire)
     --> liste des contributions dans une conférence
     --> Création-conference --> faire les liens hypertextes comme pour MDC
 Gérer les autorisations sur les routes selon le rôle
+    --> Menu : GOOD
+    --> Routes
+Checker si la maj des notes (moyenne, ect.) liés à une contribution fonctionne bien

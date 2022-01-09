@@ -59,8 +59,6 @@ router.post('/', (req, res) => {
  * Retourne toutes les conférences où la personne connectée est MDC
  */
  router.get('/MDC', (req, res) => {
-     //let id = req.params.id
-
     let payload = validateJWT(req?.headers?.authorization)
     if(payload){
         let id = payload.id
@@ -76,9 +74,5 @@ router.post('/', (req, res) => {
         res.status(StatusCodes.UNAUTHORIZED).json({error: "UNAUTHORIZED"})
     }
  });
-
-/**
- * Retourne les contributions liées à une conférence
- */
 
 module.exports = router ;

@@ -1,7 +1,18 @@
 Conference/Contributions ? (à voir si nécessaire)
     --> liste des contributions dans une conférence
     --> Création-conference --> faire les liens hypertextes comme pour MDC
+
 Gérer les autorisations sur les routes selon le rôle
     --> Menu : GOOD
     --> Routes
+
 Checker si la maj des notes (moyenne, ect.) liés à une contribution fonctionne bien
+
+Supprimer une contribution :
+    --> Supprimer le fichier lié à la contribution
+
+Supprimer une contribution :
+    --> Supprimer les contributions qui y sont liées
+
+User admin :
+    --> Supprimer les users

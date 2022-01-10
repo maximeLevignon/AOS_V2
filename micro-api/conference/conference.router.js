@@ -30,7 +30,7 @@ router.get('/titres', (req, res) => {
  */
 router.post('/', (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
-    if (payload) {
+    if (payload.roles.includes("Organisateur")) {
         const conference = new Conference({
             titre: req.body.titre,
             domaine: req.body.domaine,

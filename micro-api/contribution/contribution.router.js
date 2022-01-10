@@ -61,7 +61,7 @@ router.get('/:id/fichier', (req, res) =>{
  */
 router.post('/',  (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
-    if(payload){
+    if(payload.roles.includes("Auteur")){
         const contribution = new Contribution({
             auteur: payload.id,
             titre: req.body.titre,
@@ -90,7 +90,7 @@ router.post('/',  (req, res) => {
 router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
-    if(payload){
+    if(payload.roles.includes("Auteur")){
         Contribution.findByIdAndUpdate(id,{ 
             fichier : req.file.originalname
         }).then((contribution) => {
@@ -98,7 +98,9 @@ router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
         }).catch((error)=>{
             res.status(StatusCodes.BAD_REQUEST).json({error : error})
         })
-    } 
+    } else {
+        res.status(StatusCodes.UNAUTHORIZED).json({error: "UNAUTHORIZED"})
+    }
 });
 
 /**
@@ -107,7 +109,7 @@ router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
 router.put('/:id',(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
-    if(payload){
+    if(payload.roles.includes("Auteur")){
         Contribution.findByIdAndUpdate(id, req.body, {new : true})
             .then((contribution) => {
             res.status(StatusCodes.OK).json(contribution)
@@ -125,7 +127,7 @@ router.put('/:id',(req, res) => {
 router.delete('/:id',(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
-    if(payload){
+    if(payload.roles.includes("Auteur")){
         Contribution.deleteOne({_id: id})
             .then((contribution) => {
                 res.status(StatusCodes.OK).json({message: "Delete OK"})
@@ -142,7 +144,7 @@ router.delete('/:id',(req, res) => {
  */
 router.post('/:id/notes', (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
-    if (payload) {
+    if (payload.roles.includes("Reviewer")) {
         let id = req.params.id
         Contribution.findById(id)
             .then(async contribution => {

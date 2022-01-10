@@ -9,10 +9,8 @@
 <body>
     <label>Choisir une conférence à gérer</label>
     <select onchange="onListeDesConfChange()" id="ConferencesDuMdc">
-        <option>témoin</option>
     </select>
     <ul id="listeDesContributionsParConférence">
-        <li>témoin</li>
     </ul>
 </body>
 
@@ -109,6 +107,8 @@
                             }
                             div.append(checkbox)
                         }
+
+                        //Affichage statut
 
                         listeContrib.appendChild(li)
                         li.setAttribute("value", element._id)

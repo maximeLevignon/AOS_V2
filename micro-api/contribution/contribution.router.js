@@ -142,7 +142,7 @@ router.delete('/:id',(req, res) => {
 /**
  * Mise à jour des notes d'une contribution lors de la review d'un Reviewer
  */
-router.post('/:id/notes', (req, res) => {
+router.put('/:id/notes', (req, res) => {
     let payload = validateJWT(req?.headers?.authorization)
     if (payload.roles.includes("Reviewer")) {
         let id = req.params.id

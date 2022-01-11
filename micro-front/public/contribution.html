@@ -39,11 +39,11 @@
         }
       
         let fichier = document.getElementById("fichierContribution")
-        const formdata = new FormData()
-        formdata.append("fichierContribution",fichier.files[0])
-        console.log(formdata)
-        
-        fetch("http://localhost:3002/contributions", {
+        const formData = new FormData()
+        formData.append("fichierContribution",fichier.files[0])
+
+        let urlContributions = "http://localhost:3002/contributions"
+        fetch(urlContributions, {
             method: "POST",
             headers: new Headers({
                 'content-type': "application/json",
@@ -52,21 +52,29 @@
             body: JSON.stringify(contributionObjet)
         })
             .then(async (res) => {
-                if (res.status == 200) {    
+                let resContrib = await res.json()
+                console.log("Rescontrib :")
+                console.log(resContrib);
+                if (res.status == 200) {
                     alert("contribution créé avec succès")
-                    fetch(`http://localhost:3002/contributions/${(await res.json())._id}/upload`, {
-                    method : "PUT",
-                    headers: new Headers({
-                        "authorization": localStorage.getItem("token")
-                    }),
-                    body: formdata
-                }).then((res) =>{
-                    if(res.status == 200){
-                        console.log("uploaded")
-                    } else {
-                        console.log("fail")
-                    }
-                })
+
+                    /**
+                     * Fetch pour l'upload du fichier associé à la contribution
+                     */
+                    fetch(`http://localhost:3002/contributions/${resContrib._id}/upload`, {
+                        method: "PUT",
+                        headers: new Headers({
+                            "authorization": localStorage.getItem("token")
+                        }),
+                        body: formData
+                    })
+                        .then((res) => {
+                            if (res.status == 200) {
+                                console.log("uploaded")
+                            } else {
+                                console.log("fail")
+                            }
+                        })
                 } else {
                     alert("Erreur dans le dépôt")
                 }

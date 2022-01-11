@@ -83,7 +83,6 @@ router.post('/',  (req, res) => {
     }
 });
 
-
 /**
  * Upload du fichier de contribution
  */
@@ -122,24 +121,6 @@ router.put('/:id',(req, res) => {
 });
 
 /**
- * Supprime une contribution
- */
-router.delete('/:id',(req, res) => {
-    let id = req.params.id
-    let payload = validateJWT(req?.headers?.authorization)
-    if(payload.roles.includes("Auteur")){
-        Contribution.deleteOne({_id: id})
-            .then((contribution) => {
-                res.status(StatusCodes.OK).json({message: "Delete OK"})
-            }).catch((error)=>{
-            res.status(StatusCodes.BAD_REQUEST).json({error : error})
-        })
-    } else {
-        res.status(StatusCodes.UNAUTHORIZED).json({error : "UNAUTHORIZED"})
-    }
-});
-
-/**
  * Mise à jour des notes d'une contribution lors de la review d'un Reviewer
  */
 router.put('/:id/notes', (req, res) => {
@@ -160,5 +141,23 @@ router.put('/:id/notes', (req, res) => {
         res.status(StatusCodes.UNAUTHORIZED).json({error: "UNAUTHORIZED"})
     }
 })
+
+/**
+ * Supprime une contribution
+ */
+router.delete('/:id',(req, res) => {
+    let id = req.params.id
+    let payload = validateJWT(req?.headers?.authorization)
+    if(payload.roles.includes("Auteur")){
+        Contribution.deleteOne({_id: id})
+            .then((contribution) => {
+                res.status(StatusCodes.OK).json({message: "Delete OK"})
+            }).catch((error)=>{
+            res.status(StatusCodes.BAD_REQUEST).json({error : error})
+        })
+    } else {
+        res.status(StatusCodes.UNAUTHORIZED).json({error : "UNAUTHORIZED"})
+    }
+});
 
 module.exports = router ;

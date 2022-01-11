@@ -1,4 +1,4 @@
-Conference/Contributions ? (à voir si nécessaire)
+Conference/Contributions ?
     --> liste des contributions dans une conférence
     --> Contribution/idConf --> faire les liens hypertextes comme pour MDC
 
@@ -7,9 +7,11 @@ Supprimer une contribution :
 
 Supprimer une conférence :
     --> Supprimer les contributions qui y sont liées
-    --> fonction dans le front pour boucler sur les contribs (meettre l'id en paramètre)
+    --> fonction dans le front pour boucler sur les contribs (mettre l'id en paramètre)
 
 User admin :
     --> Supprimer les users
 
 Affichage statut d'une contribution décision MDC : GOOD
+
+Contribution, sous ressource de conférence

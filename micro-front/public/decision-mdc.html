@@ -101,10 +101,11 @@
 
                             //Affichage statut
                             let spanStatut = document.createElement('span')
+                            spanStatut.setAttribute("id", "idSpanStatut")
                             if(element.statut){
-                                spanStatut.appendChild(document.createTextNode("     Statut de la contribution : Sélectionnée pour la conférence"))
+                                spanStatut.appendChild(document.createTextNode("     Sélectionnée pour la conférence"))
                             } else {
-                                spanStatut.appendChild(document.createTextNode("     Statut de la contribution : Non sélectionnée pour la conférence"))
+                                spanStatut.appendChild(document.createTextNode("     Non sélectionnée pour la conférence"))
                             }
                             div.append(spanStatut)
 
@@ -112,9 +113,9 @@
                             if (element.fichier){
                                 let checkbox = document.createElement('input')
                                 checkbox.setAttribute("type", "checkbox")
+                                checkbox.setAttribute("id", "idCheckbox")
                                 checkbox.checked = element.statut
                                 checkbox.onclick = ()=>{
-
                                     /**
                                      * Fetch permettant le changement en base du statut de la contribution
                                      */
@@ -127,12 +128,18 @@
                                         body: JSON.stringify({statut : checkbox.checked})
                                     })
                                         .then(async (res) =>{
+                                            div.removeChild(document.getElementById("idSpanStatut"))
+                                            div.removeChild(document.getElementById("idCheckbox"))
                                             if (res.status == 200){
                                                 let resContribStatut = await res.json()
                                                 if (resContribStatut.statut){
-                                                    alert("La contribution a été sélectionnée avec succès")
+                                                    spanStatut.innerHTML = "Sélectionné pour la conférence"
+                                                    div.append(spanStatut)
+                                                    div.append(checkbox)
                                                 } else {
-                                                    alert("La contribution a été désélectionnée avec succès")
+                                                    spanStatut.innerHTML = "Non sélectionné pour la conférence"
+                                                    div.append(spanStatut)
+                                                    div.append(checkbox)
                                                 }
                                             } else {
                                                 alert("Erreur dans l'envoi de la sélection de contribution")

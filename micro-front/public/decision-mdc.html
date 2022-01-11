@@ -9,6 +9,7 @@
 <body>
     <label>Choisir une conférence à gérer</label>
     <select onchange="onListeDesConfChange()" id="ConferencesDuMdc">
+        <option value="" id="PasDeConfSelectionne">Pas de conférence sélectionnée</option>
     </select>
     <ul id="listeDesContributionsParConférence">
     </ul>
@@ -40,83 +41,114 @@
 <script>
 
     function onListeDesConfChange() {
+        /**
+         * Suppression des contributions lors du changement de conférence
+         */
         let listeContrib = document.getElementById("listeDesContributionsParConférence")
         Array.from(listeContrib.children).forEach((element, index) => {
-            if (index > 0) {
-                listeContrib.removeChild(element)
-            }
+            listeContrib.removeChild(element)
         })
 
         let listeConf = document.getElementById("ConferencesDuMdc")
-        let choixConf = listeConf.value
-        console.log(choixConf)
-        let url = "http://localhost:3002/contributions?idConference=" + choixConf
-        fetch(url, {
-            method: "GET",
-            headers: new Headers({'content-type': "application/json"})
-        })
-            .then(async (res) => {
-                if (res.status == 200) {
-                    let listeContrib = document.getElementById("listeDesContributionsParConférence")
-                    let resContrib = await res.json()
-                    console.log(resContrib)
-                    resContrib.forEach(element => {
-                        console.log(element);
-                        let li = document.createElement('li')
-                        let div = document.createElement('div')
-                        li.append(div)
+        let choixConfId = listeConf.value
+        if(choixConfId != ""){
+            console.log("ChoixConf : "+choixConfId)
+            let url = "http://localhost:3002/contributions?idConference=" + choixConfId
 
-                        // Affichage fichier
-                        if (element.fichier) {
-                            let baliseA = document.createElement('a')
-                            baliseA.setAttribute("href", "http://localhost:3002/contributions/" + element._id + "/fichier")
-                            baliseA.setAttribute("target", "_blank")
-                            baliseA.appendChild(document.createTextNode(element.titre))
-                            div.append(baliseA)
-                        } else {
-                            let span = document.createElement('span')
-                            span.appendChild(document.createTextNode("Pas de fichier"))
-                        }
-
-                        // Affichage de la moyenne
-                        let span = document.createElement('span')
-                        if (element.notes.length > 0) {
-                            let somNote = element.notes.reduce((a, b) => a + b, 0)
-                            let averageNote = somNote / element.notes.length
-                            span.appendChild(document.createTextNode("     Moyenne de la contribution : " + averageNote))
-                        } else {
-                            span.appendChild(document.createTextNode("     Pas de notes"))
-                        }
-                        div.append(span)
-
-                        // Affichage Checkbox
-                        if (element.fichier){
-                            let checkbox = document.createElement('input')
-                            checkbox.setAttribute("type", "checkbox")
-                            checkbox.checked = element.statut
-                            checkbox.onclick = ()=>{
-                                console.log(checkbox.checked);
-                                fetch("http://localhost:3002/contributions/"+element._id, {
-                                    method: "PUT",
-                                    headers: new Headers({
-                                        'content-type': "application/json",
-                                        "authorization": localStorage.getItem("token")
-                                    }),
-                                    body: JSON.stringify({statut : checkbox.checked})
-                                })
-                            }
-                            div.append(checkbox)
-                        }
-
-                        //Affichage statut
-
-                        listeContrib.appendChild(li)
-                        li.setAttribute("value", element._id)
-                    })
-                } else {
-                    alert("Erreur dans l'envoi de la notation")
-                }
+            /**
+             * Fetch pour trouver l'ensemble des contributions liées à une seul conférence
+             */
+            fetch(url, {
+                method: "GET",
+                headers: new Headers({'content-type': "application/json"})
             })
+                .then(async (res) => {
+                    if (res.status == 200) {
+                        let listeContrib = document.getElementById("listeDesContributionsParConférence")
+                        let resContrib = await res.json()
+                        console.log("Résultat du fetch  : ")
+                        console.log(resContrib);
+
+                        //Mise à jour du HTML avec les différentes balises pour chaque contribution
+                        resContrib.forEach(element => {
+                            console.log(element);
+                            let li = document.createElement('li')
+                            let div = document.createElement('div')
+                            li.append(div)
+
+                            // Affichage fichier
+                            if (element.fichier) {
+                                let baliseA = document.createElement('a')
+                                baliseA.setAttribute("href", "http://localhost:3002/contributions/" + element._id + "/fichier")
+                                baliseA.setAttribute("target", "_blank")
+                                baliseA.appendChild(document.createTextNode(element.titre))
+                                div.append(baliseA)
+                            } else {
+                                let span = document.createElement('span')
+                                span.appendChild(document.createTextNode("Pas de fichier"))
+                            }
+
+                            // Affichage de la moyenne
+                            let spanMoyenne = document.createElement('span')
+                            if (element.notes.length > 0) {
+                                let somNote = element.notes.reduce((a, b) => a + b, 0)
+                                let averageNote = somNote / element.notes.length
+                                spanMoyenne.appendChild(document.createTextNode("     Moyenne de la contribution : " + averageNote))
+                            } else {
+                                spanMoyenne.appendChild(document.createTextNode("     Pas de notes"))
+                            }
+                            div.append(spanMoyenne)
+
+                            //Affichage statut
+                            let spanStatut = document.createElement('span')
+                            if(element.statut){
+                                spanStatut.appendChild(document.createTextNode("     Statut de la contribution : Sélectionnée pour la conférence"))
+                            } else {
+                                spanStatut.appendChild(document.createTextNode("     Statut de la contribution : Non sélectionnée pour la conférence"))
+                            }
+                            div.append(spanStatut)
+
+                            // Affichage Checkbox
+                            if (element.fichier){
+                                let checkbox = document.createElement('input')
+                                checkbox.setAttribute("type", "checkbox")
+                                checkbox.checked = element.statut
+                                checkbox.onclick = ()=>{
+
+                                    /**
+                                     * Fetch permettant le changement en base du statut de la contribution
+                                     */
+                                    fetch("http://localhost:3002/contributions/"+element._id, {
+                                        method: "PUT",
+                                        headers: new Headers({
+                                            'content-type': "application/json",
+                                            "authorization": localStorage.getItem("token")
+                                        }),
+                                        body: JSON.stringify({statut : checkbox.checked})
+                                    })
+                                        .then(async (res) =>{
+                                            if (res.status == 200){
+                                                let resContribStatut = await res.json()
+                                                if (resContribStatut.statut){
+                                                    alert("La contribution a été sélectionnée avec succès")
+                                                } else {
+                                                    alert("La contribution a été désélectionnée avec succès")
+                                                }
+                                            } else {
+                                                alert("Erreur dans l'envoi de la sélection de contribution")
+                                            }
+                                        })
+                                }
+                                div.append(checkbox)
+                            }
+                            listeContrib.appendChild(li)
+                            li.setAttribute("value", element._id)
+                        })
+                    } else {
+                        alert("Erreur dans l'envoi de la notation")
+                    }
+                })
+        }
     }
 </script>
 </html>

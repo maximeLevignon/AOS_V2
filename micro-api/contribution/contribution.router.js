@@ -109,7 +109,7 @@ router.put('/:id/upload', upload.single('fichierContribution') ,(req, res) => {
 router.put('/:id',(req, res) => {
     let id = req.params.id
     let payload = validateJWT(req?.headers?.authorization)
-    if(payload.roles.includes("Auteur")){
+    if(payload.roles.includes("Membre du comité")){
         Contribution.findByIdAndUpdate(id, req.body, {new : true})
             .then((contribution) => {
             res.status(StatusCodes.OK).json(contribution)

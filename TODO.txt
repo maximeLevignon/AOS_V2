@@ -5,10 +5,11 @@ Conference/Contributions ? (à voir si nécessaire)
 Supprimer une contribution :
     --> Supprimer le fichier lié à la contribution
 
-Supprimer une contribution :
+Supprimer une conférence :
     --> Supprimer les contributions qui y sont liées
+    --> fonction dans le front pour boucler sur les contribs (meettre l'id en paramètre)
 
 User admin :
     --> Supprimer les users
 
-Affichage statut d'une contribution décision MDC
+Affichage statut d'une contribution décision MDC : GOOD

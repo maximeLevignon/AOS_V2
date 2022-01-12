@@ -9,6 +9,8 @@ Supprimer une conférence :
     --> Supprimer les contributions qui y sont liées
     --> fonction dans le front pour boucler sur les contribs (mettre l'id en paramètre)
 
+Gérer les dates des contributions (String actuellement)
+
 User admin :
     --> Supprimer les users
 
